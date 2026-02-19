@@ -838,11 +838,10 @@ body {
     transition: var(--transition);
 }
 
-.whatsapp-float i,
 .whatsapp-float svg {
-    width: 32px;
-    height: 32px;
-    stroke-width: 2.5px;
+    width: 35px;
+    height: 35px;
+    fill: currentColor;
 }
 
 .whatsapp-float:hover {

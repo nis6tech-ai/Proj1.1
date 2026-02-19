@@ -137,7 +137,10 @@
 
         // WhatsApp Link
         const waLink = document.getElementById('whatsappLink');
-        if (waLink) waLink.href = `https://wa.me/${settings.whatsappNumber}`;
+        if (waLink) {
+            waLink.href = `https://wa.me/${(settings.whatsappNumber || '919940428882').replace(/\D/g, '')}`;
+        }
+        lucide.createIcons();
     </script>
     <a href="https://wa.me/${settings.whatsappNumber}" class="whatsapp-float" id="whatsappLink" target="_blank">
         <i data-lucide="message-circle"></i>

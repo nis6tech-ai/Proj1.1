@@ -139,7 +139,10 @@
 
         // WhatsApp Link
         const waLink = document.getElementById('whatsappLink');
-        if (waLink) waLink.href = `https://wa.me/${settings.whatsappNumber}`;
+        if (waLink) {
+            waLink.href = `https://wa.me/${(settings.whatsappNumber || '919940428882').replace(/\D/g, '')}`;
+        }
+        lucide.createIcons();
 
         document.getElementById('premiumContactForm').addEventListener('submit', (e) => {
             e.preventDefault();

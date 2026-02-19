@@ -615,9 +615,11 @@ body {
     border-color: var(--primary);
 }
 
-.social-box i {
+.social-box i,
+.social-box svg {
     width: 22px;
     height: 22px;
+    stroke-width: 2px;
 }
 
 /* Search Bar - Modern Pill Design */
@@ -836,10 +838,11 @@ body {
     transition: var(--transition);
 }
 
-.whatsapp-float i {
+.whatsapp-float i,
+.whatsapp-float svg {
     width: 32px;
     height: 32px;
-    stroke-width: 2px;
+    stroke-width: 2.5px;
 }
 
 .whatsapp-float:hover {

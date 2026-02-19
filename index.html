@@ -278,8 +278,7 @@
     // WhatsApp Link logic
     const waLink = document.getElementById('whatsappLink');
     if (waLink) {
-      waLink.href = `https://wa.me/${settings.whatsappNumber.replace(/\D/g, '') || '919940428882'}`;
-      waLink.innerHTML = '<i data-lucide="message-circle" style="width:32px; height:32px;"></i>';
+      waLink.href = `https://wa.me/${(settings.whatsappNumber || '919940428882').replace(/\D/g, '')}`;
     }
     lucide.createIcons();
   </script>

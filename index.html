@@ -24,7 +24,10 @@
         <a href="contact.html">Contact</a>
       </div>
       <div class="nav-actions">
-        <button class="icon-btn"><i data-lucide="search"></i></button>
+        <div class="search-trigger" onclick="window.location.href='products.html'">
+          <i data-lucide="search" style="width:18px;"></i>
+          <span>Search assets...</span>
+        </div>
       </div>
     </div>
   </nav>
@@ -189,17 +192,6 @@
       </div>
     </section>
 
-    <section class="section-padding">
-      <div class="container">
-        <div class="cta-banner" data-aos="zoom-in">
-          <h2>Elevate Your Vision</h2>
-          <p>Experience the perfect fusion of design and engineering. Join the elite who choose Nutpa for their
-            professional hardware needs.</p>
-          <a href="contact.html" class="btn btn-primary"
-            style="background:white;color:var(--primary);padding:1.5rem 3rem;font-size:1.2rem;">Start Consultation</a>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer class="footer">
@@ -210,9 +202,9 @@
           <p style="color:var(--text-soft);max-width:300px;">Providing premium IT infrastructure and high-performance
             electronics since 2018.</p>
           <div class="social-icons">
-            <div class="social-box"><i data-lucide="instagram"></i></div>
-            <div class="social-box"><i data-lucide="facebook"></i></div>
-            <div class="social-box"><i data-lucide="twitter"></i></div>
+            <a href="https://instagram.com" target="_blank" class="social-box"><i data-lucide="instagram"></i></a>
+            <a href="https://facebook.com" target="_blank" class="social-box"><i data-lucide="facebook"></i></a>
+            <a href="tel:9940428882" class="social-box"><i data-lucide="phone"></i></a>
           </div>
         </div>
         <div class="footer-nav">
@@ -222,15 +214,6 @@
             <li style="margin-bottom:1rem;"><a href="products.html">Collections</a></li>
             <li style="margin-bottom:1rem;"><a href="about.html">Our Vision</a></li>
             <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-nav">
-          <h4 style="margin-bottom:2rem;font-weight:800;">Solutions</h4>
-          <ul style="list-style:none;">
-            <li style="margin-bottom:1rem;"><a href="#">Enterprise</a></li>
-            <li style="margin-bottom:1rem;"><a href="#">Gaming</a></li>
-            <li style="margin-bottom:1rem;"><a href="#">Industrial</a></li>
-            <li><a href="#">Support</a></li>
           </ul>
         </div>
         <div class="footer-contact">
@@ -286,7 +269,9 @@
 
     // Categories
     const categoriesContainer = document.getElementById('categoryContainer');
-    categories.forEach((cat, index) => {
+    const displayCategories = (categories && categories.length > 0) ? categories : initialData.categories;
+
+    displayCategories.forEach((cat, index) => {
       categoriesContainer.innerHTML += `
                 <div class="cat-card" data-aos="fade-up" data-aos-delay="${index * 100}" onclick="window.location.href='products.html?category=${cat.id}'">
                     <img src="${cat.image}" alt="${cat.name}">
@@ -301,7 +286,9 @@
 
     // Featured Products
     const featuredContainer = document.getElementById('featuredProducts');
-    products.slice(0, 4).forEach((p, index) => {
+    const displayProducts = (products && products.length > 0) ? products : initialData.products;
+
+    displayProducts.slice(0, 4).forEach((p, index) => {
       featuredContainer.innerHTML += `
                 <div class="p-card-premium glass" data-aos="fade-up" data-aos-delay="${index * 150}" onclick="window.location.href='product-detail.html?id=${p.id}'">
                     <div class="p-img-box">
@@ -319,14 +306,14 @@
 
     lucide.createIcons();
 
-    // Re-bind WhatsApp Link logic
+    // WhatsApp Link logic
     const waLink = document.getElementById('whatsappLink');
     if (waLink) {
-      waLink.href = `https://wa.me/${settings.whatsappNumber}`;
+      waLink.href = `https://wa.me/919940428882`;
       waLink.innerHTML = '<i data-lucide="message-circle"></i>';
     }
   </script>
-  <a href="https://wa.me/${settings.whatsappNumber}" class="whatsapp-float" id="whatsappLink" target="_blank">
+  <a href="https://wa.me/919940428882" class="whatsapp-float" id="whatsappLink" target="_blank">
     <i data-lucide="message-circle"></i>
   </a>
 </body>

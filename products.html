@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Catalog | Nutpa Elite</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body style="padding-top:100px; background-color: var(--bg-soft);">
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i data-lucide="monitor"></i></div>
+                Nut<span>pa</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="products.html" class="active">Products</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="nav-actions">
+                <div class="cart-btn">
+                    <button class="icon-btn"><i data-lucide="shopping-cart"></i></button>
+                    <span class="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container section-padding">
+        <div style="text-align:center; margin-bottom: 4rem;" data-aos="fade-down">
+            <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem;">Our Collection</h1>
+            <p style="color: var(--text-soft); font-size: 1.25rem;">Find the perfect technology for your needs.</p>
+        </div>
+
+        <div class="products-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar-sticky">
+                <div class="search-box glass">
+                    <i data-lucide="search" style="width: 20px;"></i>
+                    <input type="text" id="searchInput" placeholder="Search products..." onkeyup="handleFilter()">
+                </div>
+
+                <div class="filter-section">
+                    <h3>Categories</h3>
+                    <div class="category-list" id="categoryFilters">
+                        <button class="cat-filter-btn active" onclick="filterByCategory('all')">
+                            All Products
+                            <i data-lucide="chevron-right" style="width: 16px;"></i>
+                        </button>
+                        <!-- Dynamic Filters -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main>
+                <div class="results-meta">
+                    <span id="resultCount">Showing <strong>0</strong> results</span>
+                    <div
+                        style="display:flex; gap: 1rem; align-items: center; color: var(--text-soft); font-weight: 600;">
+                        <span>Sort by:</span>
+                        <select class="glass"
+                            style="border: none; padding: 0.5rem 1rem; border-radius: 10px; font-weight: 700; outline: none; cursor: pointer;">
+                            <option>Relevance</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="featured-grid" id="productContainer"
+                    style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                    <!-- Dynamic Products -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container" style="text-align:center; border-top:1px solid var(--border); padding-top: 4rem;">
+            <p style="color: var(--text-soft);">&copy; 2026 Nutpa Electronics. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+        lucide.createIcons();
+
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        // Initialize Category Filters
+        const filterContainer = document.getElementById('categoryFilters');
+        categories.forEach(cat => {
+            filterContainer.innerHTML += `
+                <button class="cat-filter-btn" data-cat="${cat.id}" onclick="filterByCategory('${cat.id}')">
+                    ${cat.name}
+                    <i data-lucide="chevron-right" style="width: 16px;"></i>
+                </button>
+            `;
+        });
+
+        function filterByCategory(catId) {
+            currentCategory = catId;
+            document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.cat === catId || (catId === 'all' && btn.innerText.includes('All Products'))) {
+                    btn.classList.add('active');
+                }
+            });
+            handleFilter();
+        }
+
+        function handleFilter() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const container = document.getElementById('productContainer');
+
+            let filtered = products.filter(p => {
+                const matchesCat = currentCategory === 'all' || p.category === currentCategory;
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery) || p.description.toLowerCase().includes(searchQuery);
+                return matchesCat && matchesSearch;
+            });
+
+            document.getElementById('resultCount').innerHTML = `Showing <strong>${filtered.length}</strong> results`;
+
+            container.innerHTML = '';
+            filtered.forEach((p, idx) => {
+                container.innerHTML += `
+                    <div class="p-card-premium glass" data-aos="fade-up" data-aos-delay="${(idx % 4) * 100}" onclick="window.location.href='product-detail.html?id=${p.id}'">
+                        <div class="p-img-box">
+                            <img src="${p.image}" alt="${p.name}">
+                        </div>
+                        <span class="p-tag">${p.category}</span>
+                        <h3 style="font-size: 1.1rem; margin-top: 0.5rem; font-weight: 800;">${p.name}</h3>
+                        <div class="p-price-row" style="margin-top: 1rem;">
+                            <span class="p-price" style="font-size: 1.25rem;">${p.price}</span>
+                            <div class="p-link-icon" style="width: 36px; height: 36px;"><i data-lucide="chevron-right" style="width: 18px;"></i></div>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        // Handle URL Params
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlCat = urlParams.get('category');
+        if (urlCat) filterByCategory(urlCat);
+        else handleFilter();
+
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
+    </script>
+    <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank">
+        <i data-lucide="message-circle"></i>
+    </a>
+</body>
+
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Vision | Nutpa Elite</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body style="padding-top:100px;">
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i data-lucide="monitor"></i></div>
+                Nut<span>pa</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="about.html" class="active">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="nav-actions">
+                <button class="icon-btn"><i data-lucide="search"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section-padding">
+        <div class="container">
+            <div style="max-width:900px;margin:0 auto;text-align:center;" data-aos="fade-up">
+                <span class="subtitle">Since 2018</span>
+                <h1 style="font-size:5rem;margin:2rem 0;line-height:1.1;">Engineering the <span>Future</span> of Tech
+                </h1>
+                <p style="font-size:1.5rem;color:var(--text-soft);line-height:1.8;margin-bottom:5rem;">
+                    Nutpa was founded on a single principle: that the tools of creation should never limit the creator.
+                    We curate only the most elite hardware, tested for professional standards, and delivered with
+                    surgical precision.
+                </p>
+            </div>
+
+            <div class="hero-image-wrapper" style="margin-top:4rem;" data-aos="zoom-in">
+                <div class="image-card" style="border-radius:60px;">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2000"
+                        alt="Innovation" style="border-radius:50px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding bg-soft">
+        <div class="container">
+            <div class="section-header" style="text-align:center;display:block;">
+                <span class="subtitle">Our DNA</span>
+                <h2 style="font-size:3.5rem;">Core Foundations</h2>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:3rem;margin-top:5rem;">
+                <div class="test-card glass" data-aos="fade-up">
+                    <div
+                        style="width:70px;height:70px;background:white;color:var(--primary);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:2rem;box-shadow:var(--shadow-md);">
+                        <i data-lucide="shield-check" style="width:32px;height:32px;"></i>
+                    </div>
+                    <h3 style="font-size:1.75rem;margin-bottom:1.5rem;">Uncompromising Quality</h3>
+                    <p style="color:var(--text-soft);font-size:1.1rem;line-height:1.7;">We don't sell products; we
+                        provide reliability. Every unit passes an elite 25-point inspection before it leaves our
+                        facility.</p>
+                </div>
+                <div class="test-card glass" data-aos="fade-up" data-aos-delay="200">
+                    <div
+                        style="width:70px;height:70px;background:white;color:var(--primary);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:2rem;box-shadow:var(--shadow-md);">
+                        <i data-lucide="zap" style="width:32px;height:32px;"></i>
+                    </div>
+                    <h3 style="font-size:1.75rem;margin-bottom:1.5rem;">Obsessive Support</h3>
+                    <p style="color:var(--text-soft);font-size:1.1rem;line-height:1.7;">Our technical support engineers
+                        are visionaries in their own right, available 24/7 to solve problems before they impact your
+                        workflow.</p>
+                </div>
+                <div class="test-card glass" data-aos="fade-up" data-aos-delay="400">
+                    <div
+                        style="width:70px;height:70px;background:white;color:var(--primary);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:2rem;box-shadow:var(--shadow-md);">
+                        <i data-lucide="globe" style="width:32px;height:32px;"></i>
+                    </div>
+                    <h3 style="font-size:1.75rem;margin-bottom:1.5rem;">Global Perspective</h3>
+                    <p style="color:var(--text-soft);font-size:1.1rem;line-height:1.7;">By sourcing technical components
+                        from the worlds best creators, we ensure your business has a truly international edge.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <div class="cta-banner" data-aos="zoom-in">
+                <h2>Ready for the Next Level?</h2>
+                <p>Join the thousands of professionals who trust Nutpa for their high-end technology requirements.</p>
+                <a href="contact.html" class="btn btn-primary"
+                    style="background:white;color:var(--primary);padding:1.5rem 3rem;">Inquire Now</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div style="text-align:center;border-top:1px solid var(--border);padding-top:4rem;">
+                <div class="footer-logo">Nut<span>pa</span></div>
+                <p style="color:var(--text-soft);">&copy; 2026 Nutpa Electronics. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+        lucide.createIcons();
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
+    </script>
+    <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank">
+        <i data-lucide="message-circle"></i>
+    </a>
+</body>
+
+</html>

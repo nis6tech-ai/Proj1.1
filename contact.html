@@ -14,8 +14,7 @@
     <nav class="navbar scrolled" id="navbar">
         <div class="container nav-container">
             <a href="index.html" class="logo">
-                <div class="logo-icon"><i data-lucide="monitor"></i></div>
-                Nut<span>pa</span>
+                <img src="assets/logo.png" alt="Nutpa Logo" id="navLogo">
             </a>
             <div class="nav-links">
                 <a href="index.html">Home</a>
@@ -127,9 +126,11 @@
 
         // Dynamic Branding
         document.title = `Inquire | ${settings.siteName}`;
-        document.querySelectorAll('.logo').forEach(el => {
-            el.innerHTML = `<div class="logo-icon"><i data-lucide="monitor"></i></div>${settings.siteName.split(' ')[0]}<span>${settings.siteName.split(' ')[1] || ''}</span>`;
-        });
+        // Set Logos
+        if (settings.siteLogo) {
+            const navLogo = document.getElementById('navLogo');
+            if (navLogo) navLogo.src = settings.siteLogo;
+        }
 
         // Dynamic Contact Details
         const contactBoxes = document.querySelectorAll('.glass');

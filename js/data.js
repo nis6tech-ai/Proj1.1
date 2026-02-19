@@ -7,6 +7,7 @@ const initialData = {
     settings: {
         siteName: 'Nutpa',
         siteTagline: 'Next-Gen Tech Solutions',
+        siteLogo: 'assets/logo.png',
         contactEmail: 'sales@nutpa.com',
         contactPhone: '+1 (234) 567-890',
         contactAddress: '123 Tech Avenue, Silicon Valley',

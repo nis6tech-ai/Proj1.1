@@ -14,8 +14,7 @@
   <nav class="navbar" id="navbar">
     <div class="container nav-container">
       <a href="index.html" class="logo">
-        <div class="logo-icon"><i data-lucide="monitor"></i></div>
-        Nut<span>pa</span>
+        <img src="assets/logo.png" alt="Nutpa Logo" id="navLogo">
       </a>
       <div class="nav-links">
         <a href="index.html" class="active">Home</a>
@@ -180,9 +179,11 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="footer-logo">Nut<span>pa</span></div>
+          <div class="footer-logo">
+            <img src="assets/logo.png" alt="Nutpa Logo" id="footerLogo">
+          </div>
           <p style="color:var(--text-soft);max-width:300px;">Providing premium IT infrastructure and high-performance
-            electronics since 2018.</p>
+            electronics since 2003.</p>
           <div class="social-icons">
             <a href="https://instagram.com" target="_blank" class="social-box"><i data-lucide="instagram"></i></a>
             <a href="https://facebook.com" target="_blank" class="social-box"><i data-lucide="facebook"></i></a>
@@ -229,9 +230,14 @@
 
     // Dynamic Settings Application
     document.title = `${settings.siteName} | ${settings.siteTagline}`;
-    document.querySelectorAll('.logo').forEach(el => {
-      el.innerHTML = `<div class="logo-icon"><i data-lucide="monitor"></i></div>${settings.siteName.split(' ')[0]}<span>${settings.siteName.split(' ')[1] || ''}</span>`;
-    });
+
+    // Set Logos
+    if (settings.siteLogo) {
+      const navLogo = document.getElementById('navLogo');
+      const footerLogo = document.getElementById('footerLogo');
+      if (navLogo) navLogo.src = settings.siteLogo;
+      if (footerLogo) footerLogo.src = settings.siteLogo;
+    }
     document.querySelector('.hero-text h1').innerHTML = `Premium Tech by <span>${settings.siteName}</span>`;
     document.querySelector('.hero-text p').innerText = settings.siteTagline + '. Empowering your vision with elite electronics.';
     document.querySelector('.footer-brand p').innerText = `Providing premium IT infrastructure and high-performance electronics since 2003.`;

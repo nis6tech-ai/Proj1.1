@@ -88,11 +88,18 @@
         </div>
     </footer>
 
+    <script src="js/nexus-core.js"></script>
     <script src="js/data.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
         lucide.createIcons();
+
+        // Dynamic Settings
+        document.title = `${settings.siteName} | Catalog`;
+        document.querySelectorAll('.logo').forEach(el => {
+            el.innerHTML = `<div class="logo-icon"><i data-lucide="monitor"></i></div>${settings.siteName.split(' ')[0]}<span>${settings.siteName.split(' ')[1] || ''}</span>`;
+        });
 
         let currentCategory = 'all';
         let searchQuery = '';
@@ -161,8 +168,12 @@
             if (window.scrollY > 50) navbar.classList.add('scrolled');
             else navbar.classList.remove('scrolled');
         });
+
+        // WhatsApp Dynamic
+        const waLink = document.getElementById('whatsappLink');
+        if (waLink) waLink.href = `https://wa.me/${settings.whatsappNumber}`;
     </script>
-    <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank">
+    <a href="https://wa.me/${settings.whatsappNumber}" class="whatsapp-float" id="whatsappLink" target="_blank">
         <i data-lucide="message-circle"></i>
     </a>
 </body>

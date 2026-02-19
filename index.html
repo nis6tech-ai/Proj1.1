@@ -254,6 +254,7 @@
     </div>
   </footer>
 
+  <script src="js/nexus-core.js"></script>
   <script src="js/data.js"></script>
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
@@ -317,6 +318,13 @@
     });
 
     lucide.createIcons();
+
+    // Re-bind WhatsApp Link logic
+    const waLink = document.getElementById('whatsappLink');
+    if (waLink) {
+      waLink.href = `https://wa.me/${settings.whatsappNumber}`;
+      waLink.innerHTML = '<i data-lucide="message-circle"></i>';
+    }
   </script>
   <a href="https://wa.me/${settings.whatsappNumber}" class="whatsapp-float" id="whatsappLink" target="_blank">
     <i data-lucide="message-circle"></i>

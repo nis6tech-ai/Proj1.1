@@ -111,17 +111,31 @@
         </div>
     </footer>
 
+    <script src="js/nexus-core.js"></script>
+    <script src="js/data.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
         lucide.createIcons();
+
+        // Dynamic Branding
+        document.title = `Our Vision | ${settings.siteName}`;
+        document.querySelectorAll('.logo').forEach(el => {
+            el.innerHTML = `<div class="logo-icon"><i data-lucide="monitor"></i></div>${settings.siteName.split(' ')[0]}<span>${settings.siteName.split(' ')[1] || ''}</span>`;
+        });
+        document.querySelector('.footer-logo').innerHTML = `${settings.siteName.split(' ')[0]}<span>${settings.siteName.split(' ')[1] || ''}</span>`;
+
+        // WhatsApp Link
+        const waLink = document.getElementById('whatsappLink');
+        if (waLink) waLink.href = `https://wa.me/${settings.whatsappNumber}`;
+
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) navbar.classList.add('scrolled');
             else navbar.classList.remove('scrolled');
         });
     </script>
-    <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank">
+    <a href="https://wa.me/${settings.whatsappNumber}" class="whatsapp-float" id="whatsappLink" target="_blank">
         <i data-lucide="message-circle"></i>
     </a>
 </body>

@@ -58,10 +58,18 @@
         </div>
     </footer>
 
+    <script src="js/nexus-core.js"></script>
     <script src="js/data.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
+        lucide.createIcons();
+
+        // Dynamic Branding
+        document.querySelectorAll('.logo').forEach(el => {
+            el.innerHTML = `<div class="logo-icon"><i data-lucide="monitor"></i></div>${settings.siteName.split(' ')[0]}<span>${settings.siteName.split(' ')[1] || ''}</span>`;
+        });
+
         const params = new URLSearchParams(window.location.search);
         const id = parseInt(params.get('id'));
         const product = products.find(p => p.id === id);
@@ -71,6 +79,7 @@
         if (!product) {
             container.innerHTML = "<div style='text-align:center;padding:10rem 0;'><h1>The technology you seek is unavailable</h1><a href='products.html' class='btn btn-primary' style='margin-top:2rem;'>Back to Inventory</a></div>";
         } else {
+            document.title = `${product.name} | ${settings.siteName}`;
             container.innerHTML = `
                 <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:6rem;align-items:start;">
                     <div class="image-card" data-aos="fade-right">
@@ -125,8 +134,12 @@
             if (window.scrollY > 50) navbar.classList.add('scrolled');
             else navbar.classList.remove('scrolled');
         });
+
+        // WhatsApp Link
+        const waLink = document.getElementById('whatsappLink');
+        if (waLink) waLink.href = `https://wa.me/${settings.whatsappNumber}`;
     </script>
-    <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank">
+    <a href="https://wa.me/${settings.whatsappNumber}" class="whatsapp-float" id="whatsappLink" target="_blank">
         <i data-lucide="message-circle"></i>
     </a>
 </body>

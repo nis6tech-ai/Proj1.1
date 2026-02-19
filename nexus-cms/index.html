@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Multi-Project CMS | Admin Control</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --sidebar: #0f172a;
+            --main-bg: #f8fafc;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --text-soft: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--main-bg);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 0;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            padding: 0 2rem;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .client-info {
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 0 1rem 2rem;
+            border-radius: 12px;
+        }
+
+        .client-info label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .client-selector {
+            width: 100%;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+        }
+
+        .nav {
+            flex: 1;
+            padding: 0 1rem;
+        }
+
+        .nav-link {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            text-align: left;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .header {
+            background: var(--white);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .content {
+            padding: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Dashboard Cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-val {
+            font-size: 2rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-soft);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: #eff6ff;
+            color: var(--primary);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Tables */
+        .card {
+            background: var(--white);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1.5rem;
+            background: #f8fafc;
+            color: var(--text-soft);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .p-thumb {
+            width: 50px;
+            height: 50px;
+            background: #f8fafc;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+
+        .badge {
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Forms / Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            width: 500px;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-ghost {
+            background: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        .btn-danger-ghost {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            justify-content: center;
+        }
+
+        .client-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .client-list-item:hover {
+            background: var(--bg-soft);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-box">N</div>
+            Nexus<span>CMS</span>
+        </div>
+
+        <div class="client-info">
+            <label>Selected Portfolio</label>
+            <div class="client-selector" id="clientDisplay" onclick="openClientSwitcher()">
+                <span id="activeProjectName">Nutpa Electronics</span>
+                <i data-lucide="chevrons-up-down" style="width: 16px;"></i>
+            </div>
+        </div>
+
+        <div class="nav">
+            <button class="nav-link active" onclick="switchTab(this, 'dashboard')"><i
+                    data-lucide="layout-dashboard"></i> Dashboard</button>
+            <button class="nav-link" onclick="switchTab(this, 'inventory')"><i data-lucide="package"></i>
+                Inventory</button>
+            <button class="nav-link" onclick="switchTab(this, 'clients')"><i data-lucide="globe"></i> Manage
+                Clients</button>
+            <button class="nav-link" onclick="switchTab(this, 'settings')"><i data-lucide="settings"></i>
+                Configurations</button>
+        </div>
+
+        <a href="/Users/mohammedsafiqnishar/Documents/Renta Projects/Proj1.1/index.html"
+            style="margin: 2rem; padding: 1rem; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 1rem; font-weight: 500; font-size: 0.9rem;">
+            <i data-lucide="external-link"></i> Live Site View
+        </a>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <h1 id="tabTitle">Dashboard</h1>
+            <div class="actions" id="headerActions"></div>
+        </header>
+
+        <div class="content" id="mainContent"></div>
+    </main>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h2 id="modalTitle" style="margin-bottom: 2rem;">Add New Product</h2>
+            <form id="productForm">
+                <input type="hidden" id="editProductId">
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="pName" class="form-control" required placeholder="e.g. MacBook Air">
+                </div>
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label>Category</label>
+                        <select id="pCategory" class="form-control" required></select>
+                    </div>
+                    <div>
+                        <label>Market Price</label>
+                        <input type="text" id="pPrice" class="form-control" placeholder="$0.00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" id="pImage" class="form-control" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="pDesc" class="form-control" rows="2" style="resize: none;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Specifications (One per line)</label>
+                    <textarea id="pSpecs" class="form-control" rows="4"
+                        placeholder="e.g.&#10;16GB RAM&#10;1TB SSD&#10;M3 Chip" style="resize: none;"></textarea>
+                    <small style="color:var(--text-soft); font-size:0.75rem;">Enter each technical feature on a new
+                        line.</small>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('productModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Client Switcher Modal -->
+    <div class="modal" id="clientModal">
+        <div class="modal-content" style="width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2>Switch Portfolio</h2>
+                <button class="btn btn-primary btn-icon" onclick="openAddClient()"><i data-lucide="plus"></i></button>
+            </div>
+            <div id="clientList" class="card" style="max-height: 400px; overflow-y: auto;"></div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                <button class="btn btn-ghost" onclick="closeModal('clientModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Client Modal -->
+    <div class="modal" id="addClientModal">
+        <div class="modal-content">
+            <h2>Add New Website Project</h2>
+            <form id="clientForm" style="margin-top: 2rem;">
+                <div class="form-group">
+                    <label>Website Name</label>
+                    <input type="text" id="cName" class="form-control" required placeholder="e.g. My Next Client">
+                </div>
+                <div class="form-group">
+                    <label>Public Domain</label>
+                    <input type="text" id="cDomain" class="form-control" placeholder="e.g. client-site.com">
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('addClientModal')">Back</button>
+                    <button type="submit" class="btn btn-primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/Users/mohammedsafiqnishar/Documents/Renta Projects/Proj1.1/js/nexus-core.js"></script>
+    <script src="/Users/mohammedsafiqnishar/Documents/Renta Projects/nexus-cms/js/data.js"></script>
+    <script>
+        lucide.createIcons();
+
+        let currentTab = 'dashboard';
+        let activeProject = NexusCore.getClients()[0];
+        let projectData = NexusCore.init(activeProject.id, window.initialData);
+
+        function openClientSwitcher() {
+            const list = document.getElementById('clientList');
+            list.innerHTML = '';
+            NexusCore.getClients().forEach(c => {
+                list.innerHTML += `
+                    <div class="client-list-item" onclick="switchProject('${c.id}')">
+                        <div>
+                            <div style="font-weight: 800; font-size: 1.1rem;">${c.name}</div>
+                            <div style="color: var(--text-soft); font-size: 0.8rem;">${c.domain}</div>
+                        </div>
+                        <div class="badge" style="background: ${c.id === activeProject.id ? 'var(--primary)' : '#e2e8f0'}; color: ${c.id === activeProject.id ? 'white' : 'var(--text-soft)'}">
+                            ${c.id === activeProject.id ? 'Active' : 'Select'}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('clientModal').classList.add('active');
+        }
+
+        function switchProject(cid) {
+            activeProject = NexusCore.getClients().find(c => c.id === cid);
+            projectData = NexusCore.init(activeProject.id);
+            document.getElementById('activeProjectName').innerText = activeProject.name;
+            closeModal('clientModal');
+            render();
+        }
+
+        function openAddClient() {
+            closeModal('clientModal');
+            document.getElementById('addClientModal').classList.add('active');
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        document.getElementById('clientForm').onsubmit = (e) => {
+            e.preventDefault();
+            const nc = NexusCore.addClient(document.getElementById('cName').value, document.getElementById('cDomain').value);
+            // Provision the new client with the template
+            NexusCore.save(nc.id, window.initialData);
+            switchProject(nc.id);
+            closeModal('addClientModal');
+        };
+
+        function switchTab(el, tab) {
+            currentTab = tab;
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            if (el) el.classList.add('active');
+            render();
+        }
+
+        function render() {
+            try {
+                const container = document.getElementById('mainContent');
+                const title = document.getElementById('tabTitle');
+                const actions = document.getElementById('headerActions');
+                actions.innerHTML = '';
+
+                // Ensure data is present
+                if (!projectData || !projectData.settings) {
+                    projectData = NexusCore.init(activeProject.id, window.initialData);
+                }
+
+                if (currentTab === 'dashboard') {
+                    title.innerText = 'Project Overview';
+                    container.innerHTML = `
+                        <div class="stats">
+                            <div class="stat-card">
+                                <div><span class="stat-label">Inventory Assets</span><span class="stat-val">${projectData.products.length}</span></div>
+                                <div class="stat-icon"><i data-lucide="package"></i></div>
+                            </div>
+                            <div class="stat-card">
+                                <div><span class="stat-label">Categories</span><span class="stat-val">${projectData.categories.length}</span></div>
+                                <div class="stat-icon"><i data-lucide="layers"></i></div>
+                            </div>
+                            <div class="stat-card">
+                                <div><span class="stat-label">Project Domain</span><span style="display:block; font-weight:700; margin-top:0.5rem;">${activeProject.domain}</span></div>
+                                <div class="stat-icon"><i data-lucide="link"></i></div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentTab === 'inventory') {
+                    title.innerText = 'Product Management';
+                    actions.innerHTML = `<button class="btn btn-primary" onclick="openProductModal()"><i data-lucide="plus"></i> Add Product</button>`;
+                    container.innerHTML = `
+                        <div class="card">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Details</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th style="text-align:right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${projectData.products.map(p => `
+                                        <tr>
+                                            <td><img src="${p.image}" class="p-thumb"></td>
+                                            <td><div style="font-weight: 800;">${p.name}</div><div style="font-size: 0.8rem; color: var(--text-soft); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.description}</div></td>
+                                            <td><span class="badge">${p.category}</span></td>
+                                            <td style="font-weight: 800;">${p.price}</td>
+                                            <td style="text-align:right">
+                                                <div style="display:flex; gap: 0.5rem; justify-content: flex-end;">
+                                                    <button class="btn btn-ghost btn-icon" onclick="editProduct(${p.id})"><i data-lucide="edit-3" style="width: 16px"></i></button>
+                                                    <button class="btn btn-danger-ghost btn-icon" onclick="deleteProduct(${p.id})"><i data-lucide="trash-2" style="width: 16px"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else if (currentTab === 'clients') {
+                    title.innerText = 'Multi-Tenant Portfolio';
+                    actions.innerHTML = `<button class="btn btn-primary" onclick="openAddClient()"><i data-lucide="plus"></i> Register Website</button>`;
+                    container.innerHTML = `
+                        <div class="card">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Project Name</th>
+                                        <th>Target Domain</th>
+                                        <th>Status</th>
+                                        <th style="text-align:right">Management</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${NexusCore.getClients().map(c => `
+                                        <tr>
+                                            <td><div style="font-weight: 800;">${c.name}</div></td>
+                                            <td><code>${c.domain}</code></td>
+                                            <td><span class="badge" style="background: #dcfce7; color: #166534;">PROVISIONED</span></td>
+                                            <td style="text-align:right">
+                                                <button class="btn btn-primary" onclick="switchProject('${c.id}')">Switch to ${c.id === activeProject.id ? 'Active' : 'Edit'}</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else if (currentTab === 'settings') {
+                    title.innerText = 'Global Configurations';
+                    container.innerHTML = `
+                        <div class="card" style="padding: 3rem; max-width: 800px;">
+                            <form id="settingsForm">
+                                <div class="form-group">
+                                    <label>Site Appearance Name</label>
+                                    <input type="text" id="sName" class="form-control" value="${projectData.settings.siteName}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Marketing Tagline</label>
+                                    <input type="text" id="sTagline" class="form-control" value="${projectData.settings.siteTagline}">
+                                </div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                                    <div class="form-group">
+                                        <label>Professional Email</label>
+                                        <input type="email" id="sEmail" class="form-control" value="${projectData.settings.contactEmail}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>WhatsApp Hotline</label>
+                                        <input type="text" id="sWhatsapp" class="form-control" value="${projectData.settings.whatsappNumber}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Physical Address / Office</label>
+                                    <input type="text" id="sAddress" class="form-control" value="${projectData.settings.contactAddress}">
+                                </div>
+                                <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                                    <button type="submit" class="btn btn-primary">Sync All Modifications</button>
+                                </div>
+                            </form>
+                        </div>
+                    `;
+                    document.getElementById('settingsForm').onsubmit = (e) => {
+                        e.preventDefault();
+                        projectData.settings = {
+                            ...projectData.settings,
+                            siteName: document.getElementById('sName').value,
+                            siteTagline: document.getElementById('sTagline').value,
+                            contactEmail: document.getElementById('sEmail').value,
+                            whatsappNumber: document.getElementById('sWhatsapp').value,
+                            contactAddress: document.getElementById('sAddress').value
+                        };
+                        NexusCore.save(activeProject.id, projectData);
+                        alert('Configurations synchronized successfully with ' + activeProject.name);
+                        render();
+                    };
+                }
+                lucide.createIcons();
+            } catch (err) {
+                console.error("Render error:", err);
+                document.getElementById('mainContent').innerHTML = `<div style="padding:2rem;color:red;">Error loading content: ${err.message}. Please try refreshing or clearing cache.</div>`;
+            }
+        }
+
+        // CRUD Logic
+        function openProductModal(p = null) {
+            const catSelect = document.getElementById('pCategory');
+            catSelect.innerHTML = projectData.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+            if (p) {
+                document.getElementById('modalTitle').innerText = 'Edit Product';
+                document.getElementById('editProductId').value = p.id;
+                document.getElementById('pName').value = p.name;
+                document.getElementById('pPrice').value = p.price;
+                document.getElementById('pImage').value = p.image;
+                document.getElementById('pDesc').value = p.description;
+                document.getElementById('pCategory').value = p.category;
+                document.getElementById('pSpecs').value = (p.features || []).join('\n');
+            } else {
+                document.getElementById('modalTitle').innerText = 'Create New Product';
+                document.getElementById('productForm').reset();
+                document.getElementById('editProductId').value = '';
+                document.getElementById('pSpecs').value = '';
+            }
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        document.getElementById('productForm').onsubmit = (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editProductId').value;
+
+            // Convert multi-line text to clean array
+            const features = document.getElementById('pSpecs').value
+                .split('\n')
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
+
+            const product = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('pName').value,
+                category: document.getElementById('pCategory').value,
+                price: document.getElementById('pPrice').value,
+                image: document.getElementById('pImage').value,
+                description: document.getElementById('pDesc').value,
+                features: features.length > 0 ? features : ['Elite Hardware Solution']
+            };
+
+            if (id) {
+                const idx = projectData.products.findIndex(x => x.id == id);
+                projectData.products[idx] = product;
+            } else {
+                projectData.products.push(product);
+            }
+
+            NexusCore.save(activeProject.id, projectData);
+            closeModal('productModal');
+            render();
+        };
+
+        function editProduct(id) {
+            const p = projectData.products.find(x => x.id == id);
+            openProductModal(p);
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to remove this technical asset?')) {
+                projectData.products = projectData.products.filter(x => x.id != id);
+                NexusCore.save(activeProject.id, projectData);
+                render();
+            }
+        }
+
+        render();
+    </script>
+</body>
+
+</html>

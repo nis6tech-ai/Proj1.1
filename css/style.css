@@ -568,6 +568,15 @@ body {
     margin-bottom: 6rem;
 }
 
+.footer-contact p {
+    font-size: 1.05rem;
+    color: var(--text-soft);
+}
+
+.footer-contact i {
+    flex-shrink: 0;
+}
+
 .footer-logo {
     font-size: 2.2rem;
     font-weight: 800;
@@ -601,9 +610,14 @@ body {
 .social-box:hover {
     background: var(--primary);
     color: white;
-    transform: translateY(-5px);
+    transform: translateY(-5px) scale(1.1);
     box-shadow: 0 10px 20px -5px var(--primary);
     border-color: var(--primary);
+}
+
+.social-box i {
+    width: 22px;
+    height: 22px;
 }
 
 /* Search Bar - Modern Pill Design */
@@ -816,11 +830,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
     box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
     z-index: 9999;
     text-decoration: none;
     transition: var(--transition);
+}
+
+.whatsapp-float i {
+    width: 32px;
+    height: 32px;
+    stroke-width: 2px;
 }
 
 .whatsapp-float:hover {

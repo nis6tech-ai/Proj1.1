@@ -654,6 +654,10 @@
                                         <label>WhatsApp Hotline</label>
                                         <input type="text" id="sWhatsapp" class="form-control" value="${projectData.settings.whatsappNumber}">
                                     </div>
+                                    <div class="form-group">
+                                        <label>Contact Phone (Display)</label>
+                                        <input type="text" id="sPhone" class="form-control" value="${projectData.settings.contactPhone}">
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Physical Address / Office</label>
@@ -673,6 +677,7 @@
                             siteTagline: document.getElementById('sTagline').value,
                             contactEmail: document.getElementById('sEmail').value,
                             whatsappNumber: document.getElementById('sWhatsapp').value,
+                            contactPhone: document.getElementById('sPhone').value,
                             contactAddress: document.getElementById('sAddress').value
                         };
                         NexusCore.save(activeProject.id, projectData);

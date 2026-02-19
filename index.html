@@ -24,10 +24,7 @@
         <a href="contact.html">Contact</a>
       </div>
       <div class="nav-actions">
-        <div class="search-trigger" onclick="window.location.href='products.html'">
-          <i data-lucide="search" style="width:18px;"></i>
-          <span>Search assets...</span>
-        </div>
+        <!-- Search bar removed as per request -->
       </div>
     </div>
   </nav>
@@ -116,26 +113,11 @@
       </div>
     </section>
 
-    <section class="section-padding">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <span class="subtitle">Curated Categories</span>
-            <h2>Shop by Segment</h2>
-          </div>
-          <a href="products.html" class="btn btn-glass">View All Classes</a>
-        </div>
-        <div class="cat-grid" id="categoryContainer">
-          <!-- Dynamic Categories -->
-        </div>
-      </div>
-    </section>
-
     <section class="section-padding bg-soft">
       <div class="container">
         <div class="section-header">
           <div>
-            <span class="subtitle">Featured Hardware</span>
+            <span class="subtitle">Top Selling Products</span>
             <h2>Technical Excellence</h2>
           </div>
         </div>
@@ -254,9 +236,11 @@
     document.querySelector('.footer-brand p').innerText = `Providing premium IT infrastructure and high-performance electronics since 2018.`;
     document.querySelector('.footer-contact').innerHTML = `
             <h4 style="margin-bottom:2rem;font-weight:800;">Get in Touch</h4>
-            <p style="margin-bottom:1.5rem;"><i data-lucide="mail" style="display:inline-block;width:16px;margin-right:10px;"></i> ${settings.contactEmail}</p>
-            <p style="margin-bottom:1.5rem;"><i data-lucide="phone" style="display:inline-block;width:16px;margin-right:10px;"></i> ${settings.contactPhone}</p>
-            <p><i data-lucide="map-pin" style="display:inline-block;width:16px;margin-right:10px;"></i> ${settings.contactAddress}</p>
+            <div style="display:flex; flex-direction:column; gap:1.2rem;">
+              <p style="display:flex; align-items:center; gap:12px;"><i data-lucide="mail" style="width:18px; color:var(--primary);"></i> ${settings.contactEmail}</p>
+              <p style="display:flex; align-items:center; gap:12px;"><i data-lucide="phone" style="width:18px; color:var(--primary);"></i> ${settings.contactPhone}</p>
+              <p style="display:flex; align-items:center; gap:12px;"><i data-lucide="map-pin" style="width:18px; color:var(--primary);"></i> ${settings.contactAddress}</p>
+            </div>
         `;
     document.getElementById('whatsappLink').href = `https://wa.me/${settings.whatsappNumber}`;
 
@@ -267,22 +251,7 @@
       else navbar.classList.remove('scrolled');
     });
 
-    // Categories
-    const categoriesContainer = document.getElementById('categoryContainer');
-    const displayCategories = (categories && categories.length > 0) ? categories : initialData.categories;
-
-    displayCategories.forEach((cat, index) => {
-      categoriesContainer.innerHTML += `
-                <div class="cat-card" data-aos="fade-up" data-aos-delay="${index * 100}" onclick="window.location.href='products.html?category=${cat.id}'">
-                    <img src="${cat.image}" alt="${cat.name}">
-                    <div class="cat-overlay">
-                        <span style="text-transform:uppercase;letter-spacing:2px;font-size:0.8rem;font-weight:800;opacity:0.8;">Explore</span>
-                        <h3>${cat.name}</h3>
-                        <div class="btn btn-glass" style="padding:0.75rem 1.5rem;font-size:0.9rem;">View More <i data-lucide="arrow-right" style="width:16px;"></i></div>
-                    </div>
-                </div>
-            `;
-    });
+    // Categories removed from Home as per request
 
     // Featured Products
     const featuredContainer = document.getElementById('featuredProducts');
@@ -309,9 +278,10 @@
     // WhatsApp Link logic
     const waLink = document.getElementById('whatsappLink');
     if (waLink) {
-      waLink.href = `https://wa.me/919940428882`;
-      waLink.innerHTML = '<i data-lucide="message-circle"></i>';
+      waLink.href = `https://wa.me/${settings.whatsappNumber.replace(/\D/g, '') || '919940428882'}`;
+      waLink.innerHTML = '<i data-lucide="message-circle" style="width:32px; height:32px;"></i>';
     }
+    lucide.createIcons();
   </script>
   <a href="https://wa.me/919940428882" class="whatsapp-float" id="whatsappLink" target="_blank">
     <i data-lucide="message-circle"></i>

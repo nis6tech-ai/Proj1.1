@@ -23,7 +23,10 @@
         <a href="contact.html">Contact</a>
       </div>
       <div class="nav-actions">
-        <!-- Search bar removed as per request -->
+        <!-- Actions -->
+        <button class="mobile-nav-toggle" id="menuToggle">
+          <i data-lucide="menu"></i>
+        </button>
       </div>
     </div>
   </nav>
@@ -128,20 +131,20 @@
 
     <section class="section-padding">
       <div class="container">
-        <div class="section-header" style="text-align:center;display:block;margin-bottom:6rem;">
+        <div class="section-title-wrapper">
           <span class="subtitle">Client Trust</span>
-          <h2 style="font-size:3.5rem;">What Visionaries Say</h2>
+          <h2>What Visionaries Say</h2>
         </div>
         <div class="testimonials-grid">
           <div class="test-card glass" data-aos="fade-up">
             <i data-lucide="quote" class="quote-icon"></i>
             <p>"Nutpa's workstations have completely transformed our architectural rendering pipeline. The performance
               is unmatched."</p>
-            <div style="display:flex;align-items:center;gap:1rem;">
-              <div style="width:50px;height:50px;background:#e2e8f0;border-radius:50%;"></div>
+            <div class="person-info">
+              <div class="avatar"></div>
               <div>
-                <h4 style="font-weight:800;">David Chen</h4>
-                <span style="font-size:0.85rem;color:var(--text-soft);">Principal Architect</span>
+                <h4>David Chen</h4>
+                <span>Principal Architect</span>
               </div>
             </div>
           </div>
@@ -149,11 +152,11 @@
             <i data-lucide="quote" class="quote-icon"></i>
             <p>"The industrial printing solutions provided by Nutpa helped us scale our production by 300% in a single
               quarter."</p>
-            <div style="display:flex;align-items:center;gap:1rem;">
-              <div style="width:50px;height:50px;background:#e2e8f0;border-radius:50%;"></div>
+            <div class="person-info">
+              <div class="avatar"></div>
               <div>
-                <h4 style="font-weight:800;">Sarah Miller</h4>
-                <span style="font-size:0.85rem;color:var(--text-soft);">COO, PrintDynamics</span>
+                <h4>Sarah Miller</h4>
+                <span>COO, PrintDynamics</span>
               </div>
             </div>
           </div>
@@ -161,11 +164,11 @@
             <i data-lucide="quote" class="quote-icon"></i>
             <p>"Reliability is our top priority. Nutpa's server hardware has given us zero downtime over the last 18
               months."</p>
-            <div style="display:flex;align-items:center;gap:1rem;">
-              <div style="width:50px;height:50px;background:#e2e8f0;border-radius:50%;"></div>
+            <div class="person-info">
+              <div class="avatar"></div>
               <div>
-                <h4 style="font-weight:800;">Marcus Thorne</h4>
-                <span style="font-size:0.85rem;color:var(--text-soft);">CTO, DataNest</span>
+                <h4>Marcus Thorne</h4>
+                <span>CTO, DataNest</span>
               </div>
             </div>
           </div>
@@ -210,8 +213,7 @@
             Silicon Valley</p>
         </div>
       </div>
-      <div
-        style="border-top:1px solid var(--border);padding-top:4rem;display:flex;justify-content:space-between;align-items:center;color:var(--text-soft);font-size:0.9rem;">
+      <div class="footer-meta">
         <p>&copy; 2026 Nutpa Electronics. All Rights Reserved.</p>
         <div style="display:flex;gap:2rem;">
           <span>Privacy Policy</span>
@@ -239,6 +241,32 @@
       if (footerLogo) footerLogo.src = settings.siteLogo;
     }
     document.querySelector('.hero-text h1').innerHTML = `Premium Tech by <span>${settings.siteName}</span>`;
+
+    // Mobile Menu Toggle Logic
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (menuToggle && navLinks) {
+      menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        const icon = menuToggle.querySelector('i');
+        if (navLinks.classList.contains('active')) {
+          icon.setAttribute('data-lucide', 'x');
+        } else {
+          icon.setAttribute('data-lucide', 'menu');
+        }
+        lucide.createIcons();
+      });
+
+      // Close menu when clicking a link
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navLinks.classList.remove('active');
+          menuToggle.querySelector('i').setAttribute('data-lucide', 'menu');
+          lucide.createIcons();
+        });
+      });
+    }
     document.querySelector('.hero-text p').innerText = settings.siteTagline + '. Empowering your vision with elite electronics.';
     document.querySelector('.footer-brand p').innerText = `Providing premium IT infrastructure and high-performance electronics since 2003.`;
     document.querySelector('.footer-contact').innerHTML = `
@@ -282,7 +310,8 @@
     // WhatsApp Link logic
     const waLink = document.getElementById('whatsappLink');
     if (waLink) {
-      waLink.href = `https://wa.me/${(settings.whatsappNumber || '919940428882').replace(/\D/g, '')}`;
+      const waNum = '919940428882';
+      waLink.href = `https://wa.me/${waNum}`;
     }
 
     lucide.createIcons();

@@ -11,7 +11,7 @@ const initialData = {
         contactEmail: 'sales@nutpa.com',
         contactPhone: '+1 (234) 567-890',
         contactAddress: '123 Tech Avenue, Silicon Valley',
-        whatsappNumber: '1234567890',
+        whatsappNumber: '919940428882',
         instagram: 'https://instagram.com',
         facebook: 'https://facebook.com',
         twitter: 'https://twitter.com'

@@ -24,6 +24,13 @@
     box-sizing: border-box;
 }
 
+img,
+svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 body {
     font-family: 'Outfit', -apple-system, sans-serif;
     background-color: var(--bg-main);
@@ -532,7 +539,50 @@ body {
     color: var(--text-soft);
 }
 
-/* CTA Elite */
+.section-title-wrapper {
+    text-align: center;
+    display: block;
+    margin-bottom: 6rem;
+}
+
+.section-title-wrapper h2 {
+    font-size: 3.5rem;
+}
+
+@media (max-width: 768px) {
+    .section-title-wrapper h2 {
+        font-size: 2.2rem;
+    }
+}
+
+.person-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    background: #e2e8f0;
+    border-radius: 50%;
+}
+
+.person-info h4 {
+    font-weight: 800;
+}
+
+.person-info span {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+}
+
+@media (max-width: 768px) {
+    .person-info {
+        justify-content: center;
+    }
+}
+
 .cta-banner {
     background: var(--primary);
     padding: 8rem 4rem;
@@ -548,11 +598,39 @@ body {
     margin-bottom: 2rem;
 }
 
+.footer-meta {
+    border-top: 1px solid var(--border);
+    padding-top: 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-soft);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .footer-meta {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+    }
+}
+
 .cta-banner p {
     font-size: 1.5rem;
     opacity: 0.9;
     max-width: 800px;
     margin: 0 auto 4rem;
+}
+
+@media (max-width: 768px) {
+    .cta-banner h2 {
+        font-size: 2.2rem;
+    }
+
+    .cta-banner p {
+        font-size: 1.1rem;
+    }
 }
 
 /* Footer Elite */
@@ -652,6 +730,38 @@ body {
     display: flex;
     gap: 1.5rem;
     align-items: center;
+}
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 8rem;
+    align-items: center;
+}
+
+@media (max-width: 992px) {
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+    }
+}
+
+.product-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 4rem;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .product-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .product-detail-grid h1 {
+        font-size: 2.5rem !important;
+    }
 }
 
 @media (max-width: 1200px) {
@@ -819,6 +929,121 @@ body {
     }
 }
 
+/* Responsive Enhancements */
+@media (max-width: 992px) {
+    .hero-text h1 {
+        font-size: 3.5rem;
+    }
+
+    .section-header h2 {
+        font-size: 2.5rem;
+    }
+
+    .container {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-padding {
+        padding: 5rem 0;
+    }
+
+    .hero-text h1 {
+        font-size: 2.8rem;
+    }
+
+    .hero-content {
+        padding-top: 2rem;
+    }
+
+    /* Mobile Menu Implementation Support */
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        height: 100vh;
+        background: white;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        transition: var(--transition);
+        z-index: 2000;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .mobile-nav-toggle {
+        display: block !important;
+        cursor: pointer;
+        z-index: 2001;
+    }
+
+    .nav-actions {
+        display: none !important;
+        /* Hide empty actions on mobile to save space */
+    }
+
+    .brand-grid img {
+        height: 40px;
+    }
+
+    .test-card,
+    .p-card-premium {
+        padding: 1.5rem;
+    }
+
+    .cat-grid,
+    .featured-grid,
+    .testimonials-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+
+    .hero-btns {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-btns .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-text h1 {
+        font-size: 2.2rem;
+    }
+
+    .brand-title {
+        font-size: 2rem !important;
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 0.75rem;
+    }
+}
+
+/* Base styles for the toggle (hidden by default) */
+.mobile-nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-main);
+    padding: 0.5rem;
+}
+
 /* WhatsApp Floating Icon */
 .whatsapp-float {
     position: fixed;
@@ -847,4 +1072,19 @@ body {
 .whatsapp-float:hover {
     transform: scale(1.1) translateY(-5px);
     box-shadow: 0 15px 30px rgba(37, 211, 102, 0.6);
+}
+
+/* WhatsApp Floating Icon Responsive */
+@media (max-width: 768px) {
+    .whatsapp-float {
+        width: 55px;
+        height: 55px;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .whatsapp-float svg {
+        width: 25px;
+        height: 25px;
+    }
 }

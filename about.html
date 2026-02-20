@@ -11,7 +11,7 @@
 </head>
 
 <body style="padding-top:100px;">
-    <nav class="navbar scrolled" id="navbar">
+    <nav class="navbar" id="navbar">
         <div class="container nav-container">
             <a href="index.html" class="logo">
                 <img src="assets/logo.png" alt="Nutpa Logo" id="navLogo">
@@ -23,7 +23,10 @@
                 <a href="contact.html">Contact</a>
             </div>
             <div class="nav-actions">
-                <button class="icon-btn"><i data-lucide="search"></i></button>
+                <!-- Actions -->
+                <button class="mobile-nav-toggle" id="menuToggle">
+                    <i data-lucide="menu"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -133,9 +136,35 @@
         // WhatsApp Dynamic
         const waLink = document.getElementById('whatsappLink');
         if (waLink) {
-            waLink.href = `https://wa.me/${(settings.whatsappNumber || '919940428882').replace(/\D/g, '')}`;
+            waLink.href = `https://wa.me/919940428882`;
         }
         lucide.createIcons();
+
+        // Mobile Menu Toggle Logic
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (navLinks.classList.contains('active')) {
+                    icon.setAttribute('data-lucide', 'x');
+                } else {
+                    icon.setAttribute('data-lucide', 'menu');
+                }
+                lucide.createIcons();
+            });
+
+            // Close menu when clicking a link
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    menuToggle.querySelector('i').setAttribute('data-lucide', 'menu');
+                    lucide.createIcons();
+                });
+            });
+        }
 
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');

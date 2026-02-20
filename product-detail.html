@@ -11,7 +11,7 @@
 </head>
 
 <body style="padding-top:120px;">
-    <nav class="navbar scrolled" id="navbar">
+    <nav class="navbar" id="navbar">
         <div class="container nav-container">
             <a href="index.html" class="logo">
                 <img src="assets/logo.png" alt="Nutpa Logo" id="navLogo">
@@ -23,10 +23,10 @@
                 <a href="contact.html">Contact</a>
             </div>
             <div class="nav-actions">
-                <div class="cart-btn">
-                    <button class="icon-btn"><i data-lucide="shopping-cart"></i></button>
-                    <span class="cart-count">0</span>
-                </div>
+                <!-- Actions -->
+                <button class="mobile-nav-toggle" id="menuToggle">
+                    <i data-lucide="menu"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -71,64 +71,87 @@
             if (navLogo) navLogo.src = settings.siteLogo;
         }
 
-        const params = new URLSearchParams(window.location.search);
-        const id = parseInt(params.get('id'));
-        const product = products.find(p => p.id === id);
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const product = products.find(p => p.id == id);
+            const container = document.getElementById('detailContainer');
 
-        const container = document.getElementById('detailContainer');
+            if (!product) {
+                if (container) {
+                    container.innerHTML = "<div style='text-align:center;padding:10rem 0;'><h1>Product not found</h1><a href='products.html' class='btn btn-primary'>Back to Products</a></div>";
+                }
+            } else {
+                document.title = `${product.name} | Nutpa`;
+                if (container) {
+                    // Visual debug: ensure container is visible
+                    container.style.minHeight = "400px";
 
-        if (!product) {
-            container.innerHTML = "<div style='text-align:center;padding:10rem 0;'><h1>The technology you seek is unavailable</h1><a href='products.html' class='btn btn-primary' style='margin-top:2rem;'>Back to Inventory</a></div>";
-        } else {
-            document.title = `${product.name} | ${settings.siteName}`;
-            container.innerHTML = `
-                <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:6rem;align-items:start;">
-                    <div class="image-card" data-aos="fade-right">
-                        <img src="${product.image}" alt="${product.name}">
-                    </div>
-                    <div data-aos="fade-left">
-                        <span class="subtitle">${product.category}</span>
-                        <h1 style="font-size:4rem;margin:1rem 0 2rem;line-height:1.1;">${product.name}</h1>
-                        <div style="font-size:3rem;font-weight:800;color:var(--primary);margin-bottom:2.5rem;">${product.price}</div>
-                        <p style="font-size:1.25rem;color:var(--text-soft);line-height:1.8;margin-bottom:3.5rem;max-width:600px;">
-                            ${product.description}
-                        </p>
-                        
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:4rem;">
-                            ${product.features.map(f => `
-                                <div class="glass" style="padding:1.5rem;border-radius:20px;display:flex;align-items:center;gap:1rem;font-weight:700;">
-                                    <div style="color:var(--primary);"><i data-lucide="cpu" style="width:20px;"></i></div>
-                                    <span>${f}</span>
+                    container.innerHTML = `
+                        <div class="product-detail-grid">
+                            <div class="image-card">
+                                <img src="${product.image || ''}" alt="${product.name}" style="width:100%; border-radius:20px;">
+                            </div>
+                            <div>
+                                <span class="subtitle" style="display:block;margin-bottom:1rem;">${product.category || 'Technology'}</span>
+                                <h1 style="font-size:3.5rem;margin-bottom:1.5rem;">${product.name}</h1>
+                                <div style="font-size:2.5rem;font-weight:800;color:var(--primary);margin-bottom:2rem;">${product.price}</div>
+                                <p style="font-size:1.2rem;color:var(--text-soft);line-height:1.7;margin-bottom:3rem;">
+                                    ${product.description || 'Premium technical details available upon request.'}
+                                </p>
+                                
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:3rem;">
+                                    ${(product.features || []).map(f => `
+                                        <div class="glass" style="padding:1rem;border-radius:15px;display:flex;align-items:center;gap:0.75rem;font-weight:700;font-size:0.9rem;">
+                                            <i data-lucide="check-circle" style="width:18px;color:var(--primary);"></i>
+                                            <span>${f}</span>
+                                        </div>
+                                    `).join('')}
                                 </div>
-                            `).join('')}
-                        </div>
 
-                        <div style="display:flex;gap:1.5rem;">
-                            <button class="btn btn-primary" style="padding:1.5rem 3rem;font-size:1.2rem;">Request Technical Quote</button>
-                            <button class="btn btn-glass" style="padding:1.5rem 2rem;"><i data-lucide="share-2"></i></button>
+                                <div style="display:flex;gap:1rem;">
+                                    <button class="btn btn-primary" onclick="requestEnquiry('${product.name}', '${product.price}')">Enquire Now</button>
+                                    <button class="btn btn-glass" onclick="window.history.back()">Back</button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            `;
+                    `;
+                }
 
-            // Related
-            const relatedContainer = document.getElementById('relatedProducts');
-            products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4).forEach((p, idx) => {
-                relatedContainer.innerHTML += `
-                    <div class="p-card-premium glass" data-aos="fade-up" data-aos-delay="${idx * 150}" onclick="window.location.href='product-detail.html?id=${p.id}'">
-                        <div class="p-img-box"><img src="${p.image}"></div>
-                        <span class="p-tag">${p.category}</span>
-                        <h3>${p.name}</h3>
-                        <div class="p-price-row">
-                            <span class="p-price">${p.price}</span>
-                            <div class="p-link-icon"><i data-lucide="arrow-right"></i></div>
-                        </div>
-                    </div>
-                `;
-            });
+
+                // Related
+                const relatedContainer = document.getElementById('relatedProducts');
+                if (relatedContainer) {
+                    relatedContainer.innerHTML = '';
+                    products.filter(p => p.category === product.category && p.id != product.id).slice(0, 4).forEach((p, idx) => {
+                        relatedContainer.innerHTML += `
+                            <div class="p-card-premium glass" onclick="window.location.href='product-detail.html?id=${p.id}'">
+                                <div class="p-img-box"><img src="${p.image}"></div>
+                                <span class="p-tag">${p.category}</span>
+                                <h3>${p.name}</h3>
+                                <div class="p-price-row">
+                                    <span class="p-price">${p.price}</span>
+                                    <div class="p-link-icon"><i data-lucide="arrow-right"></i></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            }
+        } catch (err) {
+            console.error("Rendering error:", err);
+            document.getElementById('detailContainer').innerHTML = "<div style='color:red;padding:5rem;text-align:center;'>Error loading product details. Please check console.</div>";
         }
 
-        lucide.createIcons();
+        // Force icons regardless
+        setTimeout(() => lucide.createIcons(), 100);
+        // Enquiry Function
+        function requestEnquiry(name, price) {
+            // Priority to the requested business number to bypass stale localStorage config
+            const num = '919940428882';
+            const message = `Hello Nutpa Team, I am interested in inquiring about:\n\n*Product:* ${name}\n*Price:* ${price}\n\nPlease provide more information.`;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(message)}`, '_blank');
+        }
 
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
@@ -139,9 +162,36 @@
         // WhatsApp Link
         const waLink = document.getElementById('whatsappLink');
         if (waLink) {
-            waLink.href = `https://wa.me/${(settings.whatsappNumber || '919940428882').replace(/\D/g, '')}`;
+            waLink.href = `https://wa.me/919940428882`;
         }
         lucide.createIcons();
+
+        // Mobile Menu Toggle Logic
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (navLinks.classList.contains('active')) {
+                    icon.setAttribute('data-lucide', 'x');
+                } else {
+                    icon.setAttribute('data-lucide', 'menu');
+                }
+                lucide.createIcons();
+            });
+
+            // Close menu when clicking a link
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    menuToggle.querySelector('i').setAttribute('data-lucide', 'menu');
+                    lucide.createIcons();
+                });
+            });
+        }
+
     </script>
     <a href="https://wa.me/919940428882" class="whatsapp-float" id="whatsappLink" target="_blank">
         <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">

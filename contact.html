@@ -80,22 +80,23 @@
             </div>
 
             <div class="image-card" style="padding:4rem;border-radius:50px;" data-aos="fade-left">
-                <form id="premiumContactForm" style="display:grid;gap:2rem;">
+                <form action="https://formsubmit.co/support@rentla.in" method="POST" id="premiumContactForm"
+                    style="display:grid;gap:2rem;">
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
                         <div class="form-group">
                             <label style="font-weight:700;margin-bottom:0.75rem;display:block;">Full Name</label>
-                            <input type="text" placeholder="e.g. Alexander Pierce" class="glass"
+                            <input type="text" name="name" required placeholder="e.g. Alexander Pierce" class="glass"
                                 style="width:100%;padding:1.2rem;border-radius:16px;border:1px solid var(--border);outline:none;">
                         </div>
                         <div class="form-group">
                             <label style="font-weight:700;margin-bottom:0.75rem;display:block;">Corporate Email</label>
-                            <input type="email" placeholder="alex@company.com" class="glass"
+                            <input type="email" name="email" required placeholder="alex@company.com" class="glass"
                                 style="width:100%;padding:1.2rem;border-radius:16px;border:1px solid var(--border);outline:none;">
                         </div>
                     </div>
                     <div>
                         <label style="font-weight:700;margin-bottom:0.75rem;display:block;">Interest Area</label>
-                        <select class="glass"
+                        <select name="interest" required class="glass"
                             style="width:100%;padding:1.2rem;border-radius:16px;border:1px solid var(--border);outline:none;appearance:none;">
                             <option>High Performance Computing</option>
                             <option>Industrial Printing Solutions</option>
@@ -106,7 +107,8 @@
                     <div>
                         <label style="font-weight:700;margin-bottom:0.75rem;display:block;">Solution Blueprint /
                             Message</label>
-                        <textarea rows="6" placeholder="Briefly describe your requirements..." class="glass"
+                        <textarea name="message" required rows="6" placeholder="Briefly describe your requirements..."
+                            class="glass"
                             style="width:100%;padding:1.2rem;border-radius:16px;border:1px solid var(--border);outline:none;resize:none;"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary"
@@ -176,11 +178,6 @@
                 });
             });
         }
-
-        document.getElementById('premiumContactForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Your inquiry has been successfully transmitted. Our experts will contact you shortly.');
-        });
     </script>
     <a href="https://wa.me/919940428882" class="whatsapp-float" id="whatsappLink" target="_blank">
         <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">

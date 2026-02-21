@@ -1,4 +1,4 @@
-# Nexus CMS | Enterprise Management Portal
+# Nis6 Tech CMS | Enterprise Management Portal
 
 This is a private, standalone administrative dashboard for the Nutpa project. 
 

@@ -844,7 +844,8 @@ body {
     margin-bottom: 3.5rem;
 }
 
-.search-box i {
+.search-box i,
+.search-box svg {
     position: absolute;
     left: 1.5rem;
     top: 50%;

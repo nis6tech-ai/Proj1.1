@@ -27,8 +27,8 @@
             </div>
             <div class="nav-actions">
                 <a href="contact.html" class="btn btn-primary"
-                    style="padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.9rem;">Get a Quote <i
-                        data-lucide="arrow-right" style="width: 16px;"></i></a>
+                    style="padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem;">Get a Quote <i
+                        data-lucide="arrow-right" style="width: 14px;"></i></a>
                 <!-- Actions -->
                 <button class="mobile-nav-toggle" id="menuToggle">
                     <i data-lucide="menu"></i>
@@ -131,13 +131,19 @@
                     relatedContainer.innerHTML = '';
                     products.filter(p => p.category === product.category && p.id != product.id).slice(0, 4).forEach((p, idx) => {
                         relatedContainer.innerHTML += `
-                            <div class="p-card-premium glass" onclick="window.location.href='product-detail.html?id=${p.id}'">
-                                <div class="p-img-box"><img src="${p.image}"></div>
-                                <span class="p-tag">${p.category}</span>
-                                <h3>${p.name}</h3>
-                                <div class="p-price-row">
-                                    <span class="p-price">${p.price}</span>
-                                    <div class="p-link-icon"><i data-lucide="arrow-right"></i></div>
+                            <div class="p-card-premium glass">
+                                <div class="p-img-box">
+                                    <img src="${p.image}" alt="${p.altText || p.name}">
+                                </div>
+                                <span class="p-tag" style="text-transform:uppercase;">${p.category}</span>
+                                <h3 style="margin: 0.5rem 0;">${p.name}</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-soft); margin-bottom: 1rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${p.description}</p>
+                                <div class="p-price-row" style="margin-bottom: 1rem;">
+                                    <span class="p-price" style="font-weight: 800; font-size: 1.1rem;">${p.price}</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <a href="product-detail.html?id=${p.id}" class="btn btn-primary" style="width: 100%; padding: 0.6rem; border-radius: 6px; font-size: 0.9rem; justify-content: center;">View Specs  →</a>
+                                    <a href="https://wa.me/919940428882?text=${encodeURIComponent("Hi Nutpa, I'm looking for " + p.name + ". Please share price and availability. My company: [company name], [area in Chennai].")}" class="btn" style="background: #25D366; color: white; width: 100%; padding: 0.6rem; border-radius: 6px; font-size: 0.9rem; justify-content: center; border: none; text-decoration: none;" target="_blank">📞 WhatsApp for best price</a>
                                 </div>
                             </div>
                         `;
@@ -155,7 +161,7 @@
         function requestEnquiry(name, price) {
             // Priority to the requested business number to bypass stale localStorage config
             const num = '919940428882';
-            const message = `Hello Nutpa Team, I am interested in inquiring about:\n\n*Product:* ${name}\n*Price:* ${price}\n\nPlease provide more information.`;
+            const message = `Hi Nutpa, I'm looking for ${name}. Please share price and availability. My company: [company name], [area in Chennai].`;
             window.open(`https://wa.me/${num}?text=${encodeURIComponent(message)}`, '_blank');
         }
 

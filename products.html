@@ -27,8 +27,8 @@
             </div>
             <div class="nav-actions">
                 <a href="contact.html" class="btn btn-primary"
-                    style="padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.9rem;">Get a Quote <i
-                        data-lucide="arrow-right" style="width: 16px;"></i></a>
+                    style="padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem;">Get a Quote <i
+                        data-lucide="arrow-right" style="width: 14px;"></i></a>
                 <!-- Actions -->
                 <button class="mobile-nav-toggle" id="menuToggle">
                     <i data-lucide="menu"></i>
@@ -148,18 +148,22 @@
             container.innerHTML = '';
             filtered.forEach((p, idx) => {
                 container.innerHTML += `
-                    <div class="p-card-premium glass" data-aos="fade-up" data-aos-delay="${(idx % 4) * 100}" onclick="window.location.href='product-detail.html?id=${p.id}'">
+                    <div class="p-card-premium glass" data-aos="fade-up" data-aos-delay="${(idx % 4) * 100}">
                         <div class="p-img-box">
-                            <img src="${p.image}" alt="${p.name}">
+                            <img src="${p.image}" alt="${p.altText || p.name}">
                         </div>
-                        <span class="p-tag">${p.category}</span>
-                        <h3 style="font-size: 1.1rem; margin-top: 0.5rem; font-weight: 800;">${p.name}</h3>
-                        <div class="p-price-row" style="margin-top: 1rem;">
-                            <span class="p-price" style="font-size: 1.25rem;">${p.price}</span>
-                            <div class="p-link-icon" style="width: 36px; height: 36px;"><i data-lucide="chevron-right" style="width: 18px;"></i></div>
+                        <span class="p-tag" style="text-transform:uppercase;">${p.category}</span>
+                        <h3 style="font-size: 1.1rem; margin-top: 0.5rem; font-weight: 800; margin-bottom: 0.5rem;">${p.name}</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-soft); margin-bottom: 1rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${p.description}</p>
+                        <div class="p-price-row" style="margin-bottom: 1rem;">
+                            <span class="p-price" style="font-size: 1.25rem; font-weight: 800;">${p.price}</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <a href="product-detail.html?id=${p.id}" class="btn btn-primary" style="width: 100%; padding: 0.6rem; border-radius: 6px; font-size: 0.9rem; justify-content: center;">View Specs  →</a>
+                            <a href="https://wa.me/919940428882?text=${encodeURIComponent("Hi Nutpa, I'm looking for " + p.name + ". Please share price and availability. My company: [company name], [area in Chennai].")}" class="btn" style="background: #25D366; color: white; width: 100%; padding: 0.6rem; border-radius: 6px; font-size: 0.9rem; justify-content: center; border: none; text-decoration: none;" target="_blank">📞 WhatsApp for best price</a>
                         </div>
                     </div>
-                `;
+                    `;
             });
             lucide.createIcons();
         }

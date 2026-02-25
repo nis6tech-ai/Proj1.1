@@ -13,7 +13,8 @@ const initialData = {
         whatsappNumber: '1234567890',
         instagram: 'https://instagram.com',
         facebook: 'https://facebook.com',
-        twitter: 'https://twitter.com'
+        twitter: 'https://twitter.com',
+        heroImage: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1200'
     },
     categories: [
         { id: 'laptops', name: 'Laptops', image: 'https://images.unsplash.com/photo-1517336712461-752110247711?auto=format&fit=crop&q=80&w=800' },

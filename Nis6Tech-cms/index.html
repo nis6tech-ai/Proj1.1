@@ -428,8 +428,24 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Image URL</label>
-                    <input type="text" id="pImage" class="form-control" placeholder="https://...">
+                    <label>Product Image</label>
+                    <div
+                        style="display: flex; gap: 1rem; align-items: center; background: #f8fafc; padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
+                        <div id="pImagePreview"
+                            style="width: 60px; height: 60px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
+                            <i data-lucide="image" style="color: #94a3b8;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="file" id="pImageUpload" accept="image/*" style="display: none;"
+                                onchange="handleImageUpload(this, 'pImagePreview', 'pImage')">
+                            <button type="button" class="btn btn-ghost"
+                                onclick="document.getElementById('pImageUpload').click()"
+                                style="width: 100%; justify-content: center; font-size: 0.8rem;">
+                                <i data-lucide="camera" style="width: 16px;"></i> Upload / Take Photo
+                            </button>
+                            <input type="hidden" id="pImage">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Description</label>
@@ -676,6 +692,21 @@
                                     <label>Marketing Tagline</label>
                                     <input type="text" id="sTagline" class="form-control" value="${projectData.settings.siteTagline}">
                                 </div>
+                                <div class="form-group">
+                                    <label>Hero Image</label>
+                                    <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; background: var(--main-bg); padding: 1.5rem; border-radius: 16px; border: 1px dashed var(--border);">
+                                        <div id="sHeroImagePreview" style="width: 120px; height: 80px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
+                                            ${projectData.settings.heroImage ? `<img src="${projectData.settings.heroImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`}
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <input type="file" id="sHeroImageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'sHeroImagePreview', 'sHeroImage')">
+                                            <button type="button" class="btn btn-primary" onclick="document.getElementById('sHeroImageUpload').click()" style="width: 100%; justify-content: center;">
+                                                <i data-lucide="camera"></i> Upload from Device / Take Photo
+                                            </button>
+                                            <input type="hidden" id="sHeroImage" value="${projectData.settings.heroImage || ''}">
+                                        </div>
+                                    </div>
+                                </div>
                                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
                                     <div class="form-group">
                                         <label>Professional Email</label>
@@ -709,7 +740,8 @@
                             contactEmail: document.getElementById('sEmail').value,
                             whatsappNumber: document.getElementById('sWhatsapp').value,
                             contactPhone: document.getElementById('sPhone').value,
-                            contactAddress: document.getElementById('sAddress').value
+                            contactAddress: document.getElementById('sAddress').value,
+                            heroImage: document.getElementById('sHeroImage').value
                         };
                         NexusCore.save(activeProject.id, projectData);
                         alert('Configurations synchronized successfully with ' + activeProject.name);
@@ -763,6 +795,7 @@
                 document.getElementById('pName').value = p.name;
                 document.getElementById('pPrice').value = p.price;
                 document.getElementById('pImage').value = p.image;
+                document.getElementById('pImagePreview').innerHTML = p.image ? `<img src="${p.image}" style="width: 100%; height: 100%; object-fit: cover;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`;
                 document.getElementById('pDesc').value = p.description;
                 document.getElementById('pCategory').value = p.category;
                 document.getElementById('pSpecs').value = (p.features || []).join('\n');
@@ -770,6 +803,8 @@
                 document.getElementById('modalTitle').innerText = 'Create New Product';
                 document.getElementById('productForm').reset();
                 document.getElementById('editProductId').value = '';
+                document.getElementById('pImage').value = '';
+                document.getElementById('pImagePreview').innerHTML = `<i data-lucide="image" style="color: #94a3b8;"></i>`;
                 document.getElementById('pSpecs').value = '';
             }
             document.getElementById('productModal').classList.add('active');
@@ -818,6 +853,19 @@
                 NexusCore.save(activeProject.id, projectData);
                 render();
             }
+        }
+
+        function handleImageUpload(input, previewId, hiddenId) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const base64 = e.target.result;
+                document.getElementById(hiddenId).value = base64;
+                document.getElementById(previewId).innerHTML = `<img src="${base64}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            };
+            reader.readAsDataURL(file);
         }
 
         render();

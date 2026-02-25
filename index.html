@@ -15,6 +15,7 @@
     <div class="container nav-container">
       <a href="index.html" class="logo">
         <img src="assets/logo.png" alt="Nutpa Logo" id="navLogo">
+        <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">Nutpa <span>Electronics</span></div>
       </a>
       <div class="nav-links">
         <a href="index.html" class="active">Home</a>
@@ -23,6 +24,9 @@
         <a href="contact.html">Contact</a>
       </div>
       <div class="nav-actions">
+        <a href="contact.html" class="btn btn-primary"
+          style="padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.9rem;">Get a Quote <i
+            data-lucide="arrow-right" style="width: 16px;"></i></a>
         <!-- Actions -->
         <button class="mobile-nav-toggle" id="menuToggle">
           <i data-lucide="menu"></i>
@@ -44,14 +48,13 @@
             solutions.
           </p>
           <div class="hero-btns">
-            <a href="products.html" class="btn btn-primary">Our Collections <i data-lucide="arrow-right"></i></a>
             <a href="about.html" class="btn btn-glass">Our Mission</a>
           </div>
         </div>
         <div class="hero-image-wrapper" data-aos="zoom-in-left" data-aos-duration="1200">
           <div class="image-card">
             <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1200"
-              alt="Tech Excellence">
+              alt="Tech Excellence" id="heroImage">
             <div class="floating-stat glass">
               <div class="stat-icon"><i data-lucide="award"></i></div>
               <div>
@@ -239,6 +242,11 @@
       const footerLogo = document.getElementById('footerLogo');
       if (navLogo) navLogo.src = settings.siteLogo;
       if (footerLogo) footerLogo.src = settings.siteLogo;
+    }
+
+    if (settings.heroImage) {
+      const heroImage = document.getElementById('heroImage');
+      if (heroImage) heroImage.src = settings.heroImage;
     }
     document.querySelector('.hero-text h1').innerHTML = `Premium Tech by <span>${settings.siteName}</span>`;
 

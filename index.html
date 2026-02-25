@@ -41,14 +41,36 @@
       <div class="container hero-content">
         <div class="hero-text" data-aos="fade-right" data-aos-duration="1000">
           <div class="badge-container">
-            <span class="badge">Orbit of Technology</span>
+            <span class="badge" style="font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">CHENNAI'S
+              AUTHORIZED B2B ELECTRONICS PARTNER</span>
           </div>
-          <h1>Premium Tech by <span>Nutpa</span></h1>
-          <p>Nutpaa targets day to day requirements of IT needs. From professional laptops to industrial printing
-            solutions.
-          </p>
-          <div class="hero-btns">
-            <a href="about.html" class="btn btn-glass">Our Mission</a>
+          <h1 style="font-size: 3.2rem; line-height: 1.2; margin-bottom: 1.5rem;">Enterprise Laptops,
+            Printers<br><span>& Projectors in Chennai.</span></h1>
+          <p style="font-size: 1.1rem; line-height: 1.6; max-width: 600px; margin-bottom: 2rem;">Nutpa Electronics
+            supplies IT departments, corporate offices, and institutions across Chennai and Tamil Nadu with certified
+            HP, Dell, Lenovo, and Epson products — backed by GST billing, 29-point quality checks, and same-day
+            delivery.</p>
+          <div class="hero-btns" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="products.html" class="btn btn-primary"
+              style="padding: 0.8rem 1.5rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 8px;">Explore
+              Products <i data-lucide="arrow-right" style="width: 18px;"></i></a>
+            <a href="https://wa.me/919940428882" class="btn"
+              style="background: #25D366; color: white; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;"
+              target="_blank">💬 Chat on WhatsApp</a>
+          </div>
+          <div class="trust-strip"
+            style="margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.9rem; align-items: center;">
+            <span
+              style="display: flex; align-items: center; gap: 0.4rem; font-weight: 600; color: var(--text-main);"><span
+                style="color: #25D366; font-weight: 800;">✓</span> Authorized HP & Epson Reseller</span>
+            <span style="opacity: 0.3; color: var(--text-soft);" class="hide-mobile">|</span>
+            <span
+              style="display: flex; align-items: center; gap: 0.4rem; font-weight: 600; color: var(--text-main);"><span
+                style="color: #25D366; font-weight: 800;">✓</span> GST Invoice on Every Order</span>
+            <span style="opacity: 0.3; color: var(--text-soft);" class="hide-mobile">|</span>
+            <span
+              style="display: flex; align-items: center; gap: 0.4rem; font-weight: 600; color: var(--text-main);"><span
+                style="color: #25D366; font-weight: 800;">✓</span> Serving Chennai Since 2016</span>
           </div>
         </div>
         <div class="hero-image-wrapper" data-aos="zoom-in-left" data-aos-duration="1200">
@@ -248,7 +270,7 @@
       const heroImage = document.getElementById('heroImage');
       if (heroImage) heroImage.src = settings.heroImage;
     }
-    document.querySelector('.hero-text h1').innerHTML = `Premium Tech by <span>${settings.siteName}</span>`;
+    // H1 dynamically generated text removed
 
     // Mobile Menu Toggle Logic
     const menuToggle = document.getElementById('menuToggle');
@@ -275,7 +297,7 @@
         });
       });
     }
-    document.querySelector('.hero-text p').innerText = settings.siteTagline + '. Empowering your vision with elite electronics.';
+    // Hero P dynamically generated text removed
     document.querySelector('.footer-brand p').innerText = `Providing premium IT infrastructure and high-performance electronics since 2003.`;
     document.querySelector('.footer-contact').innerHTML = `
             <h4 style="margin-bottom:2rem;font-weight:800;">Get in Touch</h4>

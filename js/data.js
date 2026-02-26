@@ -24,37 +24,7 @@ const initialData = {
         { id: 'accessories', name: 'Accessories', image: 'https://images.unsplash.com/photo-1527814050087-37a3d71eaea1?auto=format&fit=crop&q=80&w=800' }
     ],
     products: [
-        {
-            id: 1,
-            name: 'MacBook Pro M3 Max',
-            category: 'laptops',
-            price: '₹2,89,999 onwards',
-            image: 'https://images.unsplash.com/photo-1517336712461-eddc241ad13e?auto=format&fit=crop&q=80&w=800',
-            altText: 'MacBook Pro M3 Max laptop dealer Chennai enterprise workstation',
-            description: 'The workstation of choice for Chennai\'s top architects, animators, and software development teams. M3 Max chip, up to 36GB unified RAM, 14" and 16" options available.',
-            features: ['16-Core CPU', '40-Core GPU', '128GB Unified Memory', '8TB SSD Storage'],
-            isTopSelling: true
-        },
-        {
-            id: 2,
-            name: 'HP LaserJet Enterprise',
-            category: 'printers',
-            price: '₹74,999',
-            image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
-            description: 'Fastest printing in its class with industry-leading security features.',
-            features: ['50 ppm', 'Auto Duplex', 'Ethernet & Wi-Fi', 'Smart Security'],
-            isTopSelling: true
-        },
-        {
-            id: 3,
-            name: 'Epson 4K Laser Projector',
-            category: 'projectors',
-            price: '₹2,49,999',
-            image: 'https://images.unsplash.com/photo-1535016120720-40c646be996a?auto=format&fit=crop&q=80&w=800',
-            description: 'Immense 4K cinematic experience with ultra-bright laser technology.',
-            features: ['4K UHD Resolution', '2500 Lumens', 'HDR10 Support', 'Laser Light Source'],
-            isTopSelling: true
-        }
+
     ]
 };
 

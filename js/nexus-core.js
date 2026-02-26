@@ -10,50 +10,76 @@ const NexusCore = {
     // Initialize data for a client
     init: function (clientId, defaultData) {
         const stored = localStorage.getItem(`nexus_data_${clientId}`);
-        if (!stored && defaultData) {
-            localStorage.setItem(`nexus_data_${clientId}`, JSON.stringify(defaultData));
-            return defaultData;
-        }
+
+        // Initial fallback
+        let data = stored ? JSON.parse(stored) : defaultData;
 
         if (stored && defaultData) {
             const parsed = JSON.parse(stored);
-
-            // For products, we want to keep stored data but ensure new properties 
-            // from the updated code (like isTopSelling) are merged in if they don't exist in storage.
             const mergedProducts = defaultData.products.map(defaultProd => {
                 const storedProd = (parsed.products || []).find(p => p.id === defaultProd.id);
-                if (storedProd) {
-                    // Merge: Keep stored values but fill in missing keys from defaultProd
-                    return { ...defaultProd, ...storedProd };
-                }
+                if (storedProd) return { ...defaultProd, ...storedProd };
                 return defaultProd;
             });
-
-            // Add any products that are in storage but NOT in defaults (user added via CMS)
             const userAddedProducts = (parsed.products || []).filter(
                 sp => !defaultData.products.some(dp => dp.id === sp.id)
             );
-
-            return {
+            data = {
                 settings: { ...defaultData.settings, ...parsed.settings },
                 categories: parsed.categories || defaultData.categories,
                 products: [...mergedProducts, ...userAddedProducts]
             };
         }
 
-        return stored ? JSON.parse(stored) : defaultData;
+        // Trigger ghost sync (async)
+        this.syncFromCloud(clientId, defaultData);
+        return data;
+    },
+
+    // NEW: Sync from Firebase (Cloud -> Local)
+    syncFromCloud: async function (clientId, defaultData) {
+        if (typeof db === 'undefined') return;
+        try {
+            const doc = await db.collection('clients').doc(clientId).get();
+            if (doc.exists) {
+                const cloudData = doc.data();
+                localStorage.setItem(`nexus_data_${clientId}`, JSON.stringify(cloudData));
+                console.log("Cloud Sync: Local data updated from Firebase.");
+                // Trigger a refresh event so the UI knows to update
+                window.dispatchEvent(new Event('cloudSyncReady'));
+            } else if (defaultData) {
+                // First time setup on cloud
+                await this.syncToCloud(clientId, defaultData);
+            }
+        } catch (e) {
+            console.error("Cloud Sync Error:", e);
+        }
+    },
+
+    // NEW: Sync to Firebase (Local -> Cloud)
+    syncToCloud: async function (clientId, data) {
+        if (typeof db === 'undefined') return;
+        try {
+            await db.collection('clients').doc(clientId).set(data);
+            console.log("Cloud Save: Data pushed to Firebase.");
+        } catch (e) {
+            console.error("Cloud Save Error:", e);
+        }
     },
 
     // Save data for a client
     save: function (clientId, data) {
         try {
             localStorage.setItem(`nexus_data_${clientId}`, JSON.stringify(data));
-            // Also trigger a storage event for cross-tab updates
+            // Push to cloud instantly
+            this.syncToCloud(clientId, data);
+
             window.dispatchEvent(new Event('storage'));
         } catch (e) {
             console.error("Storage Error:", e);
             if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-                alert("CRITICAL: Storage Full! You have uploaded too many high-resolution images. Please use smaller photos or delete old products to free up space.");
+                alert("CRITICAL: Storage Full locally! However, we will try to save to Firebase.");
+                this.syncToCloud(clientId, data);
             } else {
                 alert("Error saving data: " + e.message);
             }

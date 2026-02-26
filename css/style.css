@@ -1208,3 +1208,272 @@ body {
         height: 25px;
     }
 }
+
+/* Stats Strip */
+.stats-strip {
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+}
+
+.stat-item {
+    transition: var(--transition);
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.stat-desc {
+    font-size: 1.1rem;
+    opacity: 0.85;
+    font-weight: 500;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+    }
+}
+
+/* Service Coverage */
+.area-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.area-grid span {
+    background: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-soft);
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+.area-grid span:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.coverage-box {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 3rem;
+    border-radius: 30px;
+    border: 1px solid var(--border);
+}
+
+/* Bottom CTA Banner */
+.cta-banner-premium {
+    background-color: #1A3C6E;
+    color: white;
+    padding: 8rem 2rem;
+    border-radius: 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin: 4rem 2rem;
+}
+
+.cta-banner-premium h2 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+}
+
+.cta-banner-premium p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+}
+
+.cta-btns {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+}
+
+.btn-white {
+    background: white;
+    color: #1A3C6E;
+}
+
+.btn-white:hover {
+    background: #f8fafc;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+}
+
+.btn-outline-white {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+}
+
+.btn-outline-white:hover {
+    background: white;
+    color: #1A3C6E;
+    transform: translateY(-3px);
+}
+
+.cta-contact-line {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.trust-micro {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Footer Improvements */
+.footer {
+    padding: 6rem 0 2rem;
+    background: #f8fafc;
+    border-top: 1px solid var(--border);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 4rem;
+    margin-bottom: 4rem;
+}
+
+.footer-brand p {
+    font-size: 1rem;
+    color: var(--text-soft);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.footer-title {
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: var(--text-soft);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+    padding-left: 5px;
+}
+
+.footer-contact-block p {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 1.2rem;
+    color: var(--text-soft);
+    font-size: 0.95rem;
+}
+
+.footer-contact-block i,
+.footer-contact-block svg {
+    color: var(--primary);
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+.cta-contact-line i,
+.cta-contact-line svg {
+    width: 18px !important;
+    height: 18px !important;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-soft);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .cta-banner-premium h2 {
+        font-size: 2.2rem;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+}

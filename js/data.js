@@ -58,6 +58,9 @@ const initialData = {
     ]
 };
 
+// Global exports for both public site and CMS
+window.initialData = initialData;
+
 // Logic to pull from LocalStorage (NexusCore) or use initial fallback
 let liveData;
 if (typeof NexusCore !== 'undefined') {

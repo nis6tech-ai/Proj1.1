@@ -279,10 +279,14 @@
 
         .modal-content {
             background: white;
-            width: 500px;
+            width: 600px;
+            max-width: 95vw;
+            max-height: 90vh;
             border-radius: 24px;
             padding: 2.5rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow-y: auto;
+            position: relative;
         }
 
         .form-group {
@@ -869,8 +873,8 @@
             document.getElementById('productModal').classList.add('active');
         }
 
-        // Helper to compress images before upload
-        function compressImage(file, maxWidth = 1200, quality = 0.8) {
+        // Helper to compress images before upload (More aggressive for weight/speed)
+        function compressImage(file, maxWidth = 1000, quality = 0.6) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
@@ -893,7 +897,7 @@
                         ctx.drawImage(img, 0, 0, width, height);
 
                         canvas.toBlob((blob) => {
-                            resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                            resolve(new File([blob], file.name.split('.')[0] + '.jpg', { type: 'image/jpeg' }));
                         }, 'image/jpeg', quality);
                     };
                 };
@@ -909,43 +913,45 @@
             const statusText = document.getElementById('uploadStatus');
 
             progressContainer.style.display = 'block';
-            statusText.innerText = `Optimizing ${files.length} images...`;
+            statusText.innerText = `Preparing ${files.length} images...`;
             progressBar.style.width = '0%';
 
             try {
-                // Parallel processing: Optimize and Upload all simultaneously
+                // Process each file with incremental updates for better UI feedback
+                let finishedCount = 0;
+
                 const uploadPromises = files.map(async (file, index) => {
                     const isImage = file.type.startsWith('image/');
                     if (!isImage) return null;
 
-                    // 1. Optimize (resize/compress)
+                    // 1. Aggressive Compression (already optimized helper)
                     const optimizedFile = await compressImage(file);
 
                     // 2. Upload
                     const downloadURL = await uploadFileToFirebase(optimizedFile, (percent) => {
-                        // Estimate global progress
-                        const step = 100 / files.length;
-                        const globalPercent = (index * step) + (percent * (step / 100));
-                        progressBar.style.width = globalPercent + '%';
-                        statusText.innerText = `Syncing hardware snapshots... ${Math.round(globalPercent)}%`;
+                        // Estimate global progress per file
                     });
 
-                    return { url: downloadURL, type: 'image' };
+                    finishedCount++;
+                    const progressPercent = (finishedCount / files.length) * 100;
+                    progressBar.style.width = progressPercent + '%';
+                    statusText.innerText = `Uploaded ${finishedCount} of ${files.length} images...`;
+
+                    const newItem = { url: downloadURL, type: 'image' };
+                    currentMediaItems.push(newItem);
+                    updateMediaPreviews(); // Update preview immediately as each file finishes
+
+                    return newItem;
                 });
 
-                const results = await Promise.all(uploadPromises);
+                await Promise.all(uploadPromises);
 
-                results.forEach(res => {
-                    if (res) currentMediaItems.push(res);
-                });
-
-                updateMediaPreviews();
-                statusText.innerText = "All assets optimized and synced!";
-                setTimeout(() => progressContainer.style.display = 'none', 1500);
+                statusText.innerText = "Synchronization Complete!";
+                setTimeout(() => progressContainer.style.display = 'none', 1000);
 
             } catch (err) {
                 console.error("Upload error:", err);
-                alert(`Upload speed issue. Try reducing batch size or check connection.`);
+                alert(`Upload taking too long? Try fewer images or check connection.`);
                 progressContainer.style.display = 'none';
             }
 

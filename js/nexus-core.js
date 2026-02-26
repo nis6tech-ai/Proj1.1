@@ -17,11 +17,27 @@ const NexusCore = {
 
         if (stored && defaultData) {
             const parsed = JSON.parse(stored);
-            // Deep merge/ensure keys exist
+
+            // For products, we want to keep stored data but ensure new properties 
+            // from the updated code (like isTopSelling) are merged in if they don't exist in storage.
+            const mergedProducts = defaultData.products.map(defaultProd => {
+                const storedProd = (parsed.products || []).find(p => p.id === defaultProd.id);
+                if (storedProd) {
+                    // Merge: Keep stored values but fill in missing keys from defaultProd
+                    return { ...defaultProd, ...storedProd };
+                }
+                return defaultProd;
+            });
+
+            // Add any products that are in storage but NOT in defaults (user added via CMS)
+            const userAddedProducts = (parsed.products || []).filter(
+                sp => !defaultData.products.some(dp => dp.id === sp.id)
+            );
+
             return {
-                settings: parsed.settings || defaultData.settings,
+                settings: { ...defaultData.settings, ...parsed.settings },
                 categories: parsed.categories || defaultData.categories,
-                products: parsed.products || defaultData.products
+                products: [...mergedProducts, ...userAddedProducts]
             };
         }
 

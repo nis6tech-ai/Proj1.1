@@ -5,25 +5,27 @@
 
 // Placeholder for user's Firebase config
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyCD-nF2tPRMV-CZWpmSj38zziw5NFuMXko",
+    authDomain: "nutpa-cms.firebaseapp.com",
+    projectId: "nutpa-cms",
+    storageBucket: "nutpa-cms.firebasestorage.app",
+    messagingSenderId: "121790570276",
+    appId: "1:121790570276:web:692a06b2ad1f54450c9db1",
+    measurementId: "G-4FDGCWV9LQ"
 };
 
-// Initialize Firebase (Static version)
-// Note: These scripts will be loaded via CDN in index.html
+// Initialize Firebase (Compat version)
 let db;
+let analytics;
 
 function initFirebase() {
-    if (typeof firebase !== 'undefined' && firebaseConfig.projectId !== "YOUR_PROJECT_ID") {
+    if (typeof firebase !== 'undefined') {
         firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
-        console.log("Firebase Initialized Successfully");
+        if (firebase.analytics) analytics = firebase.analytics();
+        console.log("Firebase Cloud Storage Initialized.");
         return true;
     }
-    console.warn("Firebase not configured. Using LocalStorage fallback.");
+    console.warn("Firebase scripts not loaded.");
     return false;
 }

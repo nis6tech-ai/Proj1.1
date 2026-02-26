@@ -23,9 +23,7 @@ const initialData = {
         { id: 'projectors', name: 'Projectors', image: 'https://images.unsplash.com/photo-1535016120720-40c646be996a?auto=format&fit=crop&q=80&w=800' },
         { id: 'accessories', name: 'Accessories', image: 'https://images.unsplash.com/photo-1527814050087-37a3d71eaea1?auto=format&fit=crop&q=80&w=800' }
     ],
-    products: [
-
-    ]
+    products: []
 };
 
 // Global exports for both public site and CMS

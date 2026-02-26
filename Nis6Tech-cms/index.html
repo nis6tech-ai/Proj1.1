@@ -428,24 +428,43 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Product Image</label>
+                    <label>Product Images (Max 10MB per image)</label>
                     <div
-                        style="display: flex; gap: 1rem; align-items: center; background: #f8fafc; padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
-                        <div id="pImagePreview"
-                            style="width: 60px; height: 60px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
-                            <i data-lucide="image" style="color: #94a3b8;"></i>
+                        style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; border: 2px dashed var(--border);">
+                        <div id="mediaPreviewContainer"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <!-- Previews will appear here -->
                         </div>
-                        <div style="flex: 1;">
-                            <input type="file" id="pImageUpload" accept="image/*" style="display: none;"
-                                onchange="handleImageUpload(this, 'pImagePreview', 'pImage')">
-                            <button type="button" class="btn btn-ghost"
-                                onclick="document.getElementById('pImageUpload').click()"
-                                style="width: 100%; justify-content: center; font-size: 0.8rem;">
-                                <i data-lucide="camera" style="width: 16px;"></i> Upload / Take Photo
-                            </button>
-                            <input type="hidden" id="pImage">
+                        <input type="file" id="pMediaUpload" accept="image/*" multiple style="display: none;"
+                            onchange="handleMediaSelection(this)">
+                        <button type="button" class="btn btn-primary"
+                            onclick="document.getElementById('pMediaUpload').click()"
+                            style="width: 100%; justify-content: center;">
+                            <i data-lucide="camera"></i> Upload Image(s)
+                        </button>
+                        <div id="uploadProgress" style="display: none; margin-top: 1rem;">
+                            <div style="height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                                <div id="progressBar"
+                                    style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s;">
+                                </div>
+                            </div>
+                            <small id="uploadStatus"
+                                style="color: var(--text-soft); font-size: 0.7rem; margin-top: 5px; display: block;"></small>
                         </div>
                     </div>
+                </div>
+
+                <div class="form-group"
+                    style="background:#eff6ff; padding: 1rem; border-radius: 12px; border: 1px solid #bfdbfe;">
+                    <label style="color:#1e40af;"><i data-lucide="youtube"
+                            style="width:16px; vertical-align:middle;"></i> Video URL (YouTube or Direct Link)</label>
+                    <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                        <input type="text" id="pVideoLink" class="form-control" placeholder="Paste YouTube link here..."
+                            style="flex:1;">
+                        <button type="button" class="btn btn-primary" onclick="addVideoLink()"
+                            style="padding:0.6rem 1rem;">Add</button>
+                    </div>
+                    <small style="color:#60a5fa; font-size:0.7rem;">Use YouTube for unlimited hosting / 0 cost.</small>
                 </div>
                 <div class="form-group">
                     <label>Description</label>
@@ -538,6 +557,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     <script src="../js/firebase-config.js"></script>
     <script src="../js/nexus-core.js"></script>
@@ -652,9 +672,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${projectData.products.map(p => `
+                                    ${projectData.products.map(p => {
+                        const mainImage = p.media && p.media.length > 0 ? p.media[0].url : (p.image || '');
+                        return `
                                         <tr>
-                                            <td><img src="${p.image}" class="p-thumb"></td>
+                                            <td><div style="width:50px; height:50px; background:#f1f5f9; border-radius:8px; overflow:hidden;"><img src="${mainImage}" class="p-thumb" style="width:100%; height:100%; object-fit:contain;"></div></td>
                                             <td><div style="font-weight: 800;">${p.name} ${p.isTopSelling ? '<span style="background:#fef3c7; color:#92400e; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 4px; border: 1px solid #fde68a;">TOP</span>' : ''}</div><div style="font-size: 0.8rem; color: var(--text-soft); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.description}</div></td>
                                             <td><span class="badge">${p.category}</span></td>
                                             <td style="font-weight: 800;">${p.price}</td>
@@ -665,7 +687,8 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                    `).join('')}
+                                    `;
+                    }).join('')}
                                 </tbody>
                             </table>
                         </div>
@@ -812,36 +835,191 @@
             if (currentTab === 'dashboard') render();
         };
 
+        let currentMediaItems = [];
+
         function openProductModal(p = null) {
             const catSelect = document.getElementById('pCategory');
             catSelect.innerHTML = projectData.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+            // Clear progress
+            document.getElementById('uploadProgress').style.display = 'none';
+            document.getElementById('progressBar').style.width = '0%';
 
             if (p) {
                 document.getElementById('modalTitle').innerText = 'Edit Product';
                 document.getElementById('editProductId').value = p.id;
                 document.getElementById('pName').value = p.name;
                 document.getElementById('pPrice').value = p.price;
-                document.getElementById('pImage').value = p.image;
-                document.getElementById('pImagePreview').innerHTML = p.image ? `<img src="${p.image}" style="width: 100%; height: 100%; object-fit: cover;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`;
                 document.getElementById('pDesc').value = p.description;
                 document.getElementById('pCategory').value = p.category;
                 document.getElementById('pTopSelling').checked = p.isTopSelling || false;
                 document.getElementById('pSpecs').value = (p.features || []).join('\n');
+
+                // Load existing media
+                currentMediaItems = p.media || (p.image ? [{ url: p.image, type: 'image' }] : []);
             } else {
                 document.getElementById('modalTitle').innerText = 'Create New Product';
                 document.getElementById('productForm').reset();
                 document.getElementById('editProductId').value = '';
-                document.getElementById('pImage').value = '';
-                document.getElementById('pImagePreview').innerHTML = `<i data-lucide="image" style="color: #94a3b8;"></i>`;
                 document.getElementById('pSpecs').value = '';
                 document.getElementById('pTopSelling').checked = false;
+                currentMediaItems = [];
             }
+            updateMediaPreviews();
             document.getElementById('productModal').classList.add('active');
+        }
+
+        // Helper to compress images before upload
+        function compressImage(file, maxWidth = 1200, quality = 0.8) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        canvas.toBlob((blob) => {
+                            resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                        }, 'image/jpeg', quality);
+                    };
+                };
+            });
+        }
+
+        async function handleMediaSelection(input) {
+            const files = Array.from(input.files);
+            if (!files.length) return;
+
+            const progressContainer = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('progressBar');
+            const statusText = document.getElementById('uploadStatus');
+
+            progressContainer.style.display = 'block';
+            statusText.innerText = `Optimizing ${files.length} images...`;
+            progressBar.style.width = '0%';
+
+            try {
+                // Parallel processing: Optimize and Upload all simultaneously
+                const uploadPromises = files.map(async (file, index) => {
+                    const isImage = file.type.startsWith('image/');
+                    if (!isImage) return null;
+
+                    // 1. Optimize (resize/compress)
+                    const optimizedFile = await compressImage(file);
+
+                    // 2. Upload
+                    const downloadURL = await uploadFileToFirebase(optimizedFile, (percent) => {
+                        // Estimate global progress
+                        const step = 100 / files.length;
+                        const globalPercent = (index * step) + (percent * (step / 100));
+                        progressBar.style.width = globalPercent + '%';
+                        statusText.innerText = `Syncing hardware snapshots... ${Math.round(globalPercent)}%`;
+                    });
+
+                    return { url: downloadURL, type: 'image' };
+                });
+
+                const results = await Promise.all(uploadPromises);
+
+                results.forEach(res => {
+                    if (res) currentMediaItems.push(res);
+                });
+
+                updateMediaPreviews();
+                statusText.innerText = "All assets optimized and synced!";
+                setTimeout(() => progressContainer.style.display = 'none', 1500);
+
+            } catch (err) {
+                console.error("Upload error:", err);
+                alert(`Upload speed issue. Try reducing batch size or check connection.`);
+                progressContainer.style.display = 'none';
+            }
+
+            input.value = ''; // Reset input
+        }
+
+        function addVideoLink() {
+            const input = document.getElementById('pVideoLink');
+            const url = input.value.trim();
+            if (!url) return;
+
+            // Basic detection for display preview in CMS
+            const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+
+            currentMediaItems.push({
+                url: url,
+                type: 'video',
+                provider: isYouTube ? 'youtube' : 'direct'
+            });
+
+            updateMediaPreviews();
+            input.value = ''; // Clear
+        }
+
+        function uploadFileToFirebase(file, onProgress) {
+            return new Promise((resolve, reject) => {
+                if (typeof storage === 'undefined') {
+                    reject("Firebase Storage not initialized.");
+                    return;
+                }
+                const storageRef = storage.ref(`products/${activeProject.id}/${Date.now()}_${file.name}`);
+                const uploadTask = storageRef.put(file);
+
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        onProgress(progress);
+                    },
+                    (error) => reject(error),
+                    () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then((url) => resolve(url));
+                    }
+                );
+            });
+        }
+
+        function updateMediaPreviews() {
+            const container = document.getElementById('mediaPreviewContainer');
+            container.innerHTML = currentMediaItems.map((item, index) => `
+                <div style="position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: #fff;">
+                    ${item.type === 'image'
+                    ? `<img src="${item.url}" style="width: 100%; height: 100%; object-fit: cover;">`
+                    : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000;"><i data-lucide="play-circle" style="color: white; width: 24px;"></i></div>`}
+                    <button type="button" onclick="removeMedia(${index})" style="position: absolute; top: 2px; right: 2px; background: rgba(239, 68, 68, 0.9); border: none; border-radius: 4px; padding: 2px; cursor: pointer; color: white; display: flex;">
+                        <i data-lucide="x" style="width: 12px; height: 12px;"></i>
+                    </button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function removeMedia(index) {
+            currentMediaItems.splice(index, 1);
+            updateMediaPreviews();
         }
 
         document.getElementById('productForm').onsubmit = (e) => {
             e.preventDefault();
             const id = document.getElementById('editProductId').value;
+
+            if (currentMediaItems.length === 0) {
+                alert("Please upload at least one image or video for the product.");
+                return;
+            }
 
             // Convert multi-line text to clean array
             const features = document.getElementById('pSpecs').value
@@ -854,32 +1032,28 @@
                 name: document.getElementById('pName').value,
                 category: document.getElementById('pCategory').value,
                 price: document.getElementById('pPrice').value,
-                image: document.getElementById('pImage').value,
+                // Fallback for legacy code
+                image: currentMediaItems[0].url,
+                media: currentMediaItems,
                 description: document.getElementById('pDesc').value,
                 features: features.length > 0 ? features : ['Elite Hardware Solution'],
                 isTopSelling: document.getElementById('pTopSelling').checked
             };
 
-            // Deep copy existing array to prevent reference issues if needed
             let productsArr = [...projectData.products];
-
             if (id) {
                 const idx = productsArr.findIndex(x => x.id == id);
-                if (idx !== -1) {
-                    productsArr[idx] = product;
-                }
+                if (idx !== -1) productsArr[idx] = product;
             } else {
                 productsArr.push(product);
             }
 
             projectData.products = productsArr;
             NexusCore.save(activeProject.id, projectData);
-
-            // Refresh local data from storage to be absolutely sure
             projectData = NexusCore.init(activeProject.id, window.initialData);
 
             closeModal('productModal');
-            alert('Inventory Updated Successfully!');
+            alert('Cloud Asset Synchronization Successful!');
             render();
         };
 

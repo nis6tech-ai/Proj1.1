@@ -450,6 +450,8 @@
   <!-- Firebase SDKs (Compat Version for simplicity in static site) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/nexus-core.js"></script>
@@ -538,26 +540,24 @@
       featuredContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-soft);">No products marked as Top Selling yet. Update in Admin Panel.</div>`;
     }
 
-    displayProducts.forEach((p, index) => {
+    displayProducts.forEach((p, idx) => {
+      const displayImg = p.media && p.media.length > 0 ? p.media[0].url : (p.image || '');
       featuredContainer.innerHTML += `
-                <div class="p-card-premium glass" data-aos="fade-up" data-aos-delay="${index * 150}">
-                    <div class="p-img-box">
-                        <img src="${p.image}" alt="${p.altText || p.name}">
-                    </div>
-                    <span class="p-tag" style="text-transform:uppercase;">${p.category}</span>
-                    <h3 style="margin: 0.5rem 0;">${p.name}</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-soft); margin-bottom: 1rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${p.description}</p>
-                    <div class="p-price-row" style="margin-bottom: 0.25rem;">
-                        <span class="p-price" style="font-weight: 800; font-size: 1.1rem;">${p.price}</span>
-                    </div>
-                    <a href="https://wa.me/919940428882?text=${encodeURIComponent("Hi Nutpa, I'm looking for " + p.name + ". Please share price and availability. My company: [company name], [area in Chennai].")}" 
-                       style="color: #25D366; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: block; margin-bottom: 1.25rem;" target="_blank">
-                       📞 WhatsApp for best price
-                    </a>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <a href="product-detail.html?id=${p.id}" class="btn btn-primary" style="width: 100%; padding: 0.6rem; border-radius: 6px; font-size: 0.9rem; justify-content: center;">View Specs  →</a>
-                    </div>
-                </div>
+          <div class="p-card-premium glass" data-aos="fade-up" data-aos-delay="${idx * 150}">
+            <div class="p-img-box">
+              <img src="${displayImg}" alt="${p.altText || p.name}" style="object-fit: contain;">
+            </div>
+            <span class="p-tag" style="text-transform:uppercase;">${p.category}</span>
+            <h3 style="font-size: 1.1rem; margin-top: 0.5rem; font-weight: 800; margin-bottom: 0.5rem;">${p.name}</h3>
+            <p style="font-size: 0.85rem; color: var(--text-soft); margin-bottom: 1rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${p.description}</p>
+            <div class="p-price-row" style="margin-bottom: 1rem;">
+              <span class="p-price" style="font-size: 1.25rem; font-weight: 800;">${p.price}</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+               <a href="product-detail.html?id=${p.id}" class="btn btn-primary" style="width: 100%; padding: 0.6rem; border-radius: 6px; font-size: 0.9rem; justify-content: center;">View Specs  →</a>
+               <a href="https://wa.me/919940428882?text=${encodeURIComponent("Hi Nutpa, I'm looking for " + p.name + ". Please share price and availability. My company: [company name], [area in Chennai].")}" class="btn" style="background: #25D366; color: white; width: 100%; padding: 0.6rem; border-radius: 6px; font-size: 0.9rem; justify-content: center; border: none; text-decoration: none;" target="_blank">📞 WhatsApp for best price</a>
+            </div>
+          </div>
         `;
     });
 

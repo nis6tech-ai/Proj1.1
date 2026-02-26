@@ -17,13 +17,15 @@ const firebaseConfig = {
 // Initialize Firebase (Compat version)
 let db;
 let analytics;
+let storage;
 
 function initFirebase() {
     if (typeof firebase !== 'undefined') {
         firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
+        storage = firebase.storage();
         if (firebase.analytics) analytics = firebase.analytics();
-        console.log("Firebase Cloud Storage Initialized.");
+        console.log("Firebase Cloud & Storage Initialized.");
         return true;
     }
     console.warn("Firebase scripts not loaded.");

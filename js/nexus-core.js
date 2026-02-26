@@ -46,9 +46,18 @@ const NexusCore = {
 
     // Save data for a client
     save: function (clientId, data) {
-        localStorage.setItem(`nexus_data_${clientId}`, JSON.stringify(data));
-        // Also trigger a storage event for cross-tab updates
-        window.dispatchEvent(new Event('storage'));
+        try {
+            localStorage.setItem(`nexus_data_${clientId}`, JSON.stringify(data));
+            // Also trigger a storage event for cross-tab updates
+            window.dispatchEvent(new Event('storage'));
+        } catch (e) {
+            console.error("Storage Error:", e);
+            if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                alert("CRITICAL: Storage Full! You have uploaded too many high-resolution images. Please use smaller photos or delete old products to free up space.");
+            } else {
+                alert("Error saving data: " + e.message);
+            }
+        }
     },
 
     // Get all clients registered in the system

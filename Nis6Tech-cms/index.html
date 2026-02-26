@@ -387,7 +387,7 @@
                 Configurations</button>
         </div>
 
-        <a href="/Users/mohammedsafiqnishar/Documents/Renta Projects/Proj1.1/index.html"
+        <a href="../index.html"
             style="margin: 2rem; padding: 1rem; color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 1rem; font-weight: 500; font-size: 0.9rem;">
             <i data-lucide="external-link"></i> Live Site View
         </a>
@@ -536,7 +536,7 @@
     </div>
 
     <script src="../js/nexus-core.js"></script>
-    <script src="js/data.js"></script>
+    <script src="../js/data.js"></script>
     <script>
         lucide.createIcons();
 
@@ -841,27 +841,43 @@
                 isTopSelling: document.getElementById('pTopSelling').checked
             };
 
+            // Deep copy existing array to prevent reference issues if needed
+            let productsArr = [...projectData.products];
+
             if (id) {
-                const idx = projectData.products.findIndex(x => x.id == id);
-                projectData.products[idx] = product;
+                const idx = productsArr.findIndex(x => x.id == id);
+                if (idx !== -1) {
+                    productsArr[idx] = product;
+                }
             } else {
-                projectData.products.push(product);
+                productsArr.push(product);
             }
 
+            projectData.products = productsArr;
             NexusCore.save(activeProject.id, projectData);
+
+            // Refresh local data from storage to be absolutely sure
+            projectData = NexusCore.init(activeProject.id, window.initialData);
+
             closeModal('productModal');
+            alert('Inventory Updated Successfully!');
             render();
         };
 
         function editProduct(id) {
             const p = projectData.products.find(x => x.id == id);
-            openProductModal(p);
+            if (p) openProductModal(p);
         }
 
         function deleteProduct(id) {
             if (confirm('Are you sure you want to remove this technical asset?')) {
                 projectData.products = projectData.products.filter(x => x.id != id);
                 NexusCore.save(activeProject.id, projectData);
+
+                // Refresh local data
+                projectData = NexusCore.init(activeProject.id, window.initialData);
+
+                alert('Product Removed.')
                 render();
             }
         }

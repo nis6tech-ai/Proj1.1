@@ -168,6 +168,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
+        lucide.createIcons();
 
         let currentCategory = 'all';
         let searchQuery = '';
@@ -303,6 +304,10 @@ Please share more details.`)}" class="btn" style="background: #25D366; color: wh
         if (waLink) {
             waLink.href = `https://wa.me/919940428882`;
         }
+
+        // Final Global Icon Pass to catch header/footer
+        lucide.createIcons();
+        setTimeout(() => lucide.createIcons(), 500);
     </script>
     <!-- FLOATING BUTTONS -->
     <div class="floating-controls"

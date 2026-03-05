@@ -1203,9 +1203,6 @@ body {
 
 /* WhatsApp Floating Icon */
 .whatsapp-float {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
     width: 65px;
     height: 65px;
     background-color: #25d366;
@@ -1256,13 +1253,18 @@ body {
     height: 32px;
 }
 
+@media (max-width: 768px) {
+    .call-float {
+        width: 55px;
+        height: 55px;
+    }
+}
+
 /* WhatsApp Floating Icon Responsive */
 @media (max-width: 768px) {
     .whatsapp-float {
         width: 55px;
         height: 55px;
-        bottom: 20px;
-        right: 20px;
     }
 
     .whatsapp-float svg {

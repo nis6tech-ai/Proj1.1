@@ -88,6 +88,11 @@ body {
         background: white;
         box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
     }
+
+    .navbar .btn-primary {
+        display: none;
+        /* Hide 'Get a Quote' on mobile navbar to save space */
+    }
 }
 
 .navbar.scrolled {
@@ -167,7 +172,7 @@ body {
 }
 
 .hero-text h1 {
-    font-size: 4.8rem;
+    font-size: clamp(2.5rem, 8vw, 4.8rem);
     font-weight: 800;
     line-height: 1.1;
     margin: 1.5rem 0 2rem;
@@ -657,6 +662,38 @@ body {
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
     margin-top: 1rem;
+}
+
+@media (max-width: 1024px) {
+
+    .why-us-grid,
+    .cat-grid,
+    .featured-grid,
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+
+    .why-us-grid,
+    .cat-grid,
+    .featured-grid,
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+
+    body {
+        font-size: 15px;
+    }
+
+    h1 {
+        font-size: 2.2rem !important;
+    }
+
+    h2 {
+        font-size: 1.8rem !important;
+    }
 }
 
 .benefit-card {
@@ -1174,9 +1211,9 @@ body {
     background-color: #25d366;
     color: white;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
     z-index: 9999;
     text-decoration: none;
@@ -1192,6 +1229,31 @@ body {
 .whatsapp-float:hover {
     transform: scale(1.1) translateY(-5px);
     box-shadow: 0 15px 30px rgba(37, 211, 102, 0.6);
+}
+
+.call-float {
+    width: 65px;
+    height: 65px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.call-float:hover {
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 123, 255, 0.6);
+}
+
+.call-float i,
+.call-float svg {
+    width: 32px;
+    height: 32px;
 }
 
 /* WhatsApp Floating Icon Responsive */
@@ -1305,6 +1367,33 @@ body {
     position: relative;
     overflow: hidden;
     margin: 4rem 2rem;
+}
+
+@media (max-width: 768px) {
+    .cta-banner-premium {
+        padding: 4rem 1.5rem;
+        margin: 2rem 1rem;
+        border-radius: 30px;
+    }
+
+    .cta-banner-premium h2 {
+        font-size: 2rem;
+    }
+
+    .cta-banner-premium p {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .cta-btns {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .cta-btns .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .cta-banner-premium h2 {

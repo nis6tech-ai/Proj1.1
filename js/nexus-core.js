@@ -1,112 +1,75 @@
 /**
- * Nexus Core - Universal Data Management for Multi-tenant Static Sites
- * This script handles localStorage persistence and multi-client switching.
+ * Nexus Core PHP Transition
+ * Redirects all data operations to your Hostinger server.
  */
 
 const NexusCore = {
-    // Current active client ID (defaults to nutpa)
-    activeClientId: 'nutpa',
+    apiUrl: '/api/sync.php',
 
-    // Initialize data for a client
-    init: function (clientId, defaultData) {
-        const stored = localStorage.getItem(`nexus_data_${clientId}`);
+    init: async function (clientId) {
+        try {
+            const resp = await fetch(`${this.apiUrl}?action=get_data`);
+            const data = await resp.json();
+            return data;
+        } catch (e) {
+            console.error("Initialization Failed:", e);
+            return null;
+        }
+    },
 
-        // Initial fallback
-        let data = stored ? JSON.parse(stored) : defaultData;
-
-        if (stored && defaultData) {
-            const parsed = JSON.parse(stored);
-            const mergedProducts = defaultData.products.map(defaultProd => {
-                const storedProd = (parsed.products || []).find(p => p.id === defaultProd.id);
-                if (storedProd) return { ...defaultProd, ...storedProd };
-                return defaultProd;
+    saveProduct: async function (product) {
+        try {
+            const resp = await fetch(`${this.apiUrl}?action=save_product`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(product)
             });
-            const userAddedProducts = (parsed.products || []).filter(
-                sp => !defaultData.products.some(dp => dp.id === sp.id)
-            );
-            data = {
-                settings: { ...defaultData.settings, ...parsed.settings },
-                categories: parsed.categories || defaultData.categories,
-                products: [...mergedProducts, ...userAddedProducts]
-            };
-        }
-
-        // Trigger ghost sync (async)
-        this.syncFromCloud(clientId, defaultData);
-        return data;
-    },
-
-    // NEW: Sync from Firebase (Cloud -> Local)
-    syncFromCloud: async function (clientId, defaultData) {
-        if (typeof db === 'undefined') return;
-        try {
-            const doc = await db.collection('clients').doc(clientId).get();
-            if (doc.exists) {
-                const cloudData = doc.data();
-                localStorage.setItem(`nexus_data_${clientId}`, JSON.stringify(cloudData));
-                console.log("Cloud Sync: Local data updated from Firebase.");
-                // Trigger a refresh event so the UI knows to update
-                window.dispatchEvent(new Event('cloudSyncReady'));
-            } else if (defaultData) {
-                // First time setup on cloud
-                await this.syncToCloud(clientId, defaultData);
-            }
+            return await resp.json();
         } catch (e) {
-            console.error("Cloud Sync Error:", e);
+            console.error("Save Failed:", e);
+            return { error: e.message };
         }
     },
 
-    // NEW: Sync to Firebase (Local -> Cloud)
-    syncToCloud: async function (clientId, data) {
-        if (typeof db === 'undefined') return;
+    deleteProduct: async function (id) {
+        await fetch(`${this.apiUrl}?action=delete_product&id=${id}`);
+        return { success: true };
+    },
+
+    save: async function (clientId, data) {
         try {
-            await db.collection('clients').doc(clientId).set(data);
-            console.log("Cloud Save: Data pushed to Firebase.");
+            const resp = await fetch(`${this.apiUrl}?action=save_settings`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return await resp.json();
         } catch (e) {
-            console.error("Cloud Save Error:", e);
+            console.error("Settings Save Failed:", e);
+            return { error: e.message };
         }
     },
 
-    // Save data for a client
-    save: function (clientId, data) {
+    uploadFile: async function (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
         try {
-            localStorage.setItem(`nexus_data_${clientId}`, JSON.stringify(data));
-            // Push to cloud instantly
-            this.syncToCloud(clientId, data);
-
-            window.dispatchEvent(new Event('storage'));
+            const resp = await fetch(`${this.apiUrl}?action=upload`, {
+                method: 'POST',
+                body: formData
+            });
+            return await resp.json();
         } catch (e) {
-            console.error("Storage Error:", e);
-            if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-                alert("CRITICAL: Storage Full locally! However, we will try to save to Firebase.");
-                this.syncToCloud(clientId, data);
-            } else {
-                alert("Error saving data: " + e.message);
-            }
+            return { error: "Upload connection failed" };
         }
     },
 
-    // Get all clients registered in the system
     getClients: function () {
-        const clients = localStorage.getItem('nexus_clients');
-        return clients ? JSON.parse(clients) : [
+        return [
             { id: 'nutpa', name: 'Nutpa Electronics', domain: 'nutpa.com', status: 'active' }
         ];
-    },
-
-    // Add a new client
-    addClient: function (name, domain) {
-        const clients = this.getClients();
-        const id = name.toLowerCase().replace(/\s+/g, '_');
-        const newClient = { id, name, domain, status: 'active' };
-        clients.push(newClient);
-        localStorage.setItem('nexus_clients', JSON.stringify(clients));
-
-        // Initialize with empty product list
-        this.save(id, { categories: [], products: [] });
-        return newClient;
     }
 };
 
-// Auto-export for vanilla environment
 window.NexusCore = NexusCore;

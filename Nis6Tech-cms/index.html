@@ -427,25 +427,37 @@
                         <select id="pCategory" class="form-control" required></select>
                     </div>
                     <div>
-                        <label>Market Price</label>
-                        <input type="text" id="pPrice" class="form-control" placeholder="$0.00">
+                        <label>Market Price (₹)</label>
+                        <input type="text" id="pPrice" class="form-control" placeholder="0.00">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Product Images (Max 10MB per image)</label>
+                    <label>Product Images</label>
+                    <div
+                        style="background: #fdf2f2; border: 1px solid #fecaca; padding: 0.75rem; border-radius: 10px; margin-bottom: 1rem; font-size: 0.8rem; color: #991b1b; display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="alert-triangle" style="width: 16px;"></i>
+                        <span>Recommended size: <strong>800x800 pixels</strong> (Center the product for best fit). Max
+                            10MB.</span>
+                    </div>
                     <div
                         style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; border: 2px dashed var(--border);">
                         <div id="mediaPreviewContainer"
                             style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
                             <!-- Previews will appear here -->
                         </div>
-                        <input type="file" id="pMediaUpload" accept="image/*" multiple style="display: none;"
-                            onchange="handleMediaSelection(this)">
-                        <button type="button" class="btn btn-primary"
-                            onclick="document.getElementById('pMediaUpload').click()"
-                            style="width: 100%; justify-content: center;">
-                            <i data-lucide="camera"></i> Upload Image(s)
-                        </button>
+
+
+
+                        <!-- Option 2: Upload (Requires Firebase Storage) -->
+                        <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
+                            <input type="file" id="pMediaUpload" accept="image/*" multiple style="display: none;"
+                                onchange="handleMediaSelection(this)">
+                            <button type="button" class="btn btn-ghost"
+                                onclick="document.getElementById('pMediaUpload').click()"
+                                style="width: 100%; justify-content: center; font-size: 0.8rem; background: #f8fafc;">
+                                <i data-lucide="camera" style="width: 16px;"></i> Or Upload from Computer
+                            </button>
+                        </div>
                         <div id="uploadProgress"
                             style="display: none; margin-top: 1.5rem; background: #fff; padding: 1.25rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
                             <div
@@ -474,7 +486,6 @@
                         <button type="button" class="btn btn-primary" onclick="addVideoLink()"
                             style="padding:0.6rem 1rem;">Add</button>
                     </div>
-                    <small style="color:#60a5fa; font-size:0.7rem;">Use YouTube for unlimited hosting / 0 cost.</small>
                 </div>
                 <div class="form-group">
                     <label>Description</label>
@@ -564,27 +575,40 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
-    <script src="../js/firebase-config.js"></script>
+    <!-- Core Logic (Replaces Firebase) -->
     <script src="../js/nexus-core.js"></script>
     <script src="../js/data.js"></script>
     <script>
-        initFirebase();
-        lucide.createIcons();
-
-        // Refresh CMS if cloud sync happens while open
-        window.addEventListener('cloudSyncReady', () => {
-            projectData = NexusCore.init(activeProject.id, window.initialData);
-            render();
-        });
-
-        let currentTab = 'dashboard';
         let activeProject = NexusCore.getClients()[0];
-        let projectData = NexusCore.init(activeProject.id, window.initialData);
+        let projectData = { settings: {}, categories: [], products: [] };
+        let currentTab = 'dashboard';
+
+        // Initialize CMS Data from PHP
+        async function initCMS() {
+            try {
+                const data = await NexusCore.init('nutpa');
+                if (!data || data.error) {
+                    const errMsg = data ? data.error : "Database settings in api/connect.php are incorrect or server is unreachable.";
+                    document.getElementById('mainContent').innerHTML = `
+                        <div style="background:#fee2e2; border:1px solid #ef4444; color:#991b1b; padding:2rem; border-radius:16px; margin:2rem;">
+                            <h2 style="margin-bottom:1rem;">⚠️ Server Connection Failed</h2>
+                            <p>${errMsg}</p>
+                            <hr style="margin:1rem 0; opacity:0.2;">
+                            <p style="font-size:0.9rem;">Please check <strong>api/connect.php</strong> and ensure your database details are correct.</p>
+                            <button onclick="location.reload()" style="margin-top:1.5rem; background:#ef4444; color:white; border:none; padding:0.75rem 1.5rem; border-radius:8px; cursor:pointer; font-weight:700;">Try Again</button>
+                        </div>
+                    `;
+                    return;
+                }
+                projectData = data;
+                render();
+                lucide.createIcons();
+            } catch (err) {
+                console.error("CMS Load Fallback:", err);
+            }
+        }
+
+        initCMS();
 
         function openClientSwitcher() {
             const list = document.getElementById('clientList');
@@ -605,9 +629,9 @@
             document.getElementById('clientModal').classList.add('active');
         }
 
-        function switchProject(cid) {
+        async function switchProject(cid) {
             activeProject = NexusCore.getClients().find(c => c.id === cid);
-            projectData = NexusCore.init(activeProject.id);
+            projectData = await NexusCore.init(activeProject.id);
             document.getElementById('activeProjectName').innerText = activeProject.name;
             closeModal('clientModal');
             render();
@@ -644,8 +668,9 @@
                 actions.innerHTML = '';
 
                 // Ensure data is present
-                if (!projectData || !projectData.settings) {
-                    projectData = NexusCore.init(activeProject.id, window.initialData);
+                if (!projectData || !projectData.settings || Object.keys(projectData.settings).length === 0) {
+                    container.innerHTML = `<div style="padding:3rem; text-align:center; color:var(--text-soft);">Loading project data...</div>`;
+                    return;
                 }
 
                 if (currentTab === 'dashboard') {
@@ -684,12 +709,14 @@
                                 <tbody>
                                     ${projectData.products.map(p => {
                         const mainImage = p.media && p.media.length > 0 ? p.media[0].url : (p.image || '');
+                        const categoryObj = projectData.categories.find(c => c.id === p.category);
+                        const categoryName = categoryObj ? categoryObj.name : (p.category || 'N/A');
                         return `
                                         <tr>
                                             <td><div style="width:50px; height:50px; background:#f1f5f9; border-radius:8px; overflow:hidden;"><img src="${mainImage}" class="p-thumb" style="width:100%; height:100%; object-fit:contain;"></div></td>
                                             <td><div style="font-weight: 800;">${p.name} ${p.isTopSelling ? '<span style="background:#fef3c7; color:#92400e; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 4px; border: 1px solid #fde68a;">TOP</span>' : ''}</div><div style="font-size: 0.8rem; color: var(--text-soft); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.description}</div></td>
-                                            <td><span class="badge">${p.category}</span></td>
-                                            <td style="font-weight: 800;">${p.price}</td>
+                                            <td><span class="badge">${categoryName}</span></td>
+                                            <td style="font-weight: 800;">₹${p.price}</td>
                                             <td style="text-align:right">
                                                 <div style="display:flex; gap: 0.5rem; justify-content: flex-end;">
                                                     <button class="btn btn-ghost btn-icon" onclick="editProduct(${p.id})"><i data-lucide="edit-3" style="width: 16px"></i></button>
@@ -734,49 +761,69 @@
                     `;
                 } else if (currentTab === 'settings') {
                     title.innerText = 'Global Configurations';
+                    const s = projectData.settings || {};
                     container.innerHTML = `
                         <div class="card" style="padding: 3rem; max-width: 800px;">
                             <form id="settingsForm">
                                 <div class="form-group">
                                     <label>Site Appearance Name</label>
-                                    <input type="text" id="sName" class="form-control" value="${projectData.settings.siteName}">
+                                    <input type="text" id="sName" class="form-control" value="${s.siteName || s.site_name || ''}">
                                 </div>
                                 <div class="form-group">
                                     <label>Marketing Tagline</label>
-                                    <input type="text" id="sTagline" class="form-control" value="${projectData.settings.siteTagline}">
+                                    <input type="text" id="sTagline" class="form-control" value="${s.siteTagline || s.site_tagline || ''}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Site Navigation Logo</label>
+                                    <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; background: var(--main-bg); padding: 1rem; border-radius: 12px; border: 1px dashed var(--border);">
+                                        <div id="sLogoPreview" style="width: 80px; height: 50px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
+                                            ${(s.siteLogo || s.site_logo) ? `<img src="${s.siteLogo || s.site_logo}" style="width: 100%; height: 100%; object-fit: contain;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`}
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <input type="file" id="sLogoUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'sLogoPreview', 'sLogo')">
+                                            <button type="button" class="btn btn-ghost" onclick="document.getElementById('sLogoUpload').click()" style="width: 100%; justify-content: center;">
+                                                <i data-lucide="camera"></i> Change Logo
+                                            </button>
+                                            <input type="hidden" id="sLogo" value="${s.siteLogo || s.site_logo || ''}">
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Hero Image</label>
+                                    <div style="background: #fdf2f2; border: 1px solid #fecaca; padding: 0.6rem 1rem; border-radius: 10px; margin-bottom: 1rem; font-size: 0.75rem; color: #991b1b; display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="alert-triangle" style="width: 14px;"></i>
+                                        <span>Ideal size: <strong>1200x600 pixels</strong> (Landscape).</span>
+                                    </div>
                                     <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; background: var(--main-bg); padding: 1.5rem; border-radius: 16px; border: 1px dashed var(--border);">
                                         <div id="sHeroImagePreview" style="width: 120px; height: 80px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
-                                            ${projectData.settings.heroImage ? `<img src="${projectData.settings.heroImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`}
+                                            ${(s.heroImage || s.hero_image) ? `<img src="${s.heroImage || s.hero_image}" style="width: 100%; height: 100%; object-fit: cover;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`}
                                         </div>
                                         <div style="flex: 1;">
                                             <input type="file" id="sHeroImageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'sHeroImagePreview', 'sHeroImage')">
                                             <button type="button" class="btn btn-primary" onclick="document.getElementById('sHeroImageUpload').click()" style="width: 100%; justify-content: center;">
                                                 <i data-lucide="camera"></i> Upload from Device / Take Photo
                                             </button>
-                                            <input type="hidden" id="sHeroImage" value="${projectData.settings.heroImage || ''}">
+                                            <input type="hidden" id="sHeroImage" value="${s.heroImage || s.hero_image || ''}">
                                         </div>
                                     </div>
                                 </div>
                                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
                                     <div class="form-group">
                                         <label>Professional Email</label>
-                                        <input type="email" id="sEmail" class="form-control" value="${projectData.settings.contactEmail}">
+                                        <input type="email" id="sEmail" class="form-control" value="${s.contactEmail || s.contact_email || ''}">
                                     </div>
                                     <div class="form-group">
                                         <label>WhatsApp Hotline</label>
-                                        <input type="text" id="sWhatsapp" class="form-control" value="${projectData.settings.whatsappNumber}">
+                                        <input type="text" id="sWhatsapp" class="form-control" value="${s.whatsappNumber || s.whatsapp_number || ''}">
                                     </div>
                                     <div class="form-group">
                                         <label>Contact Phone (Display)</label>
-                                        <input type="text" id="sPhone" class="form-control" value="${projectData.settings.contactPhone}">
+                                        <input type="text" id="sPhone" class="form-control" value="${s.contactPhone || s.contact_phone || ''}">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Physical Address / Office</label>
-                                    <input type="text" id="sAddress" class="form-control" value="${projectData.settings.contactAddress}">
+                                    <input type="text" id="sAddress" class="form-control" value="${s.contactAddress || s.contact_address || ''}">
                                 </div>
                                 <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
                                     <button type="submit" class="btn btn-primary">Sync All Modifications</button>
@@ -793,19 +840,25 @@
                     `;
                     document.getElementById('settingsForm').onsubmit = (e) => {
                         e.preventDefault();
-                        projectData.settings = {
-                            ...projectData.settings,
+                        const updated = {
                             siteName: document.getElementById('sName').value,
                             siteTagline: document.getElementById('sTagline').value,
+                            siteLogo: document.getElementById('sLogo').value,
                             contactEmail: document.getElementById('sEmail').value,
                             whatsappNumber: document.getElementById('sWhatsapp').value,
                             contactPhone: document.getElementById('sPhone').value,
                             contactAddress: document.getElementById('sAddress').value,
                             heroImage: document.getElementById('sHeroImage').value
                         };
-                        NexusCore.save(activeProject.id, projectData);
-                        alert('Configurations synchronized successfully with ' + activeProject.name);
-                        render();
+                        projectData.settings = updated;
+                        NexusCore.save(activeProject.id, projectData).then(res => {
+                            if (res.success) {
+                                alert('Configurations synchronized successfully with the server!');
+                                render();
+                            } else {
+                                alert('Failed to sync: ' + (res.error || 'Server error'));
+                            }
+                        });
                     };
                 }
                 lucide.createIcons();
@@ -821,28 +874,42 @@
             document.getElementById('categoryModal').classList.add('active');
         }
 
-        document.getElementById('categoryForm').onsubmit = (e) => {
+        document.getElementById('categoryForm').onsubmit = async (e) => {
             e.preventDefault();
-            const id = document.getElementById('catId').value.toLowerCase().replace(/\s+/g, '-');
-            const name = document.getElementById('catName').value;
-            const image = document.getElementById('catImage').value;
+            const id = document.getElementById('catId').value.toLowerCase().replace(/\s+/g, '-').trim();
+            const name = document.getElementById('catName').value.trim();
+            const image = document.getElementById('catImage').value.trim();
+
+            if (!id || !name) return;
 
             if (projectData.categories.find(c => c.id === id)) {
                 alert('Category ID already exists!');
                 return;
             }
 
-            projectData.categories.push({ id, name, image });
-            NexusCore.save(activeProject.id, projectData);
+            const newCat = { id, name, image };
 
-            const catSelect = document.getElementById('pCategory');
-            if (catSelect) {
-                catSelect.innerHTML += `<option value="${id}">${name}</option>`;
-                catSelect.value = id;
+            // Save to MySQL
+            const res = await fetch('/api/sync.php?action=save_category', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newCat)
+            });
+            const result = await res.json();
+
+            if (result.success) {
+                projectData.categories.push(newCat);
+                const catSelect = document.getElementById('pCategory');
+                if (catSelect) {
+                    catSelect.innerHTML += `<option value="${id}">${name}</option>`;
+                    catSelect.value = id;
+                }
+                closeModal('categoryModal');
+                if (currentTab === 'dashboard') render();
+                alert('Category created and synced!');
+            } else {
+                alert('Failed to save category: ' + result.error);
             }
-
-            closeModal('categoryModal');
-            if (currentTab === 'dashboard') render();
         };
 
         let currentMediaItems = [];
@@ -896,47 +963,6 @@
             }
         }
 
-        // Helper to compress images before upload (More aggressive for weight/speed)
-        function compressImage(file, maxWidth = 1000, quality = 0.6) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onerror = () => reject("Failed to read file.");
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onerror = () => reject("Failed to load image for compression.");
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        try {
-                            const canvas = document.createElement('canvas');
-                            let width = img.width;
-                            let height = img.height;
-
-                            if (width > maxWidth) {
-                                height *= maxWidth / width;
-                                width = maxWidth;
-                            }
-
-                            canvas.width = width;
-                            canvas.height = height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, width, height);
-
-                            canvas.toBlob((blob) => {
-                                if (!blob) {
-                                    reject("Compression failed.");
-                                    return;
-                                }
-                                resolve(new File([blob], file.name.split('.')[0] + '.jpg', { type: 'image/jpeg' }));
-                            }, 'image/jpeg', quality);
-                        } catch (e) {
-                            reject(e);
-                        }
-                    };
-                };
-            });
-        }
-
         async function handleMediaSelection(input) {
             const files = Array.from(input.files);
             if (!files.length) return;
@@ -949,70 +975,46 @@
 
             progressContainer.style.display = 'block';
             progressBar.style.width = '0%';
+            statusText.innerText = "Connecting to Cloud Storage...";
 
             try {
                 let finishedCount = 0;
 
-                // Process SEQUENTIALLY to prevent browser freeze and allow cancellation
+                // Secure sequential upload to your server
                 for (let i = 0; i < files.length; i++) {
                     if (uploadAborted) break;
 
                     const file = files[i];
-                    const isImage = file.type.startsWith('image/');
-                    if (!isImage) continue;
-
-                    statusText.innerText = `Optimizing asset ${finishedCount + 1} of ${files.length}...`;
+                    statusText.innerText = `Sending file ${i + 1} to server storage...`;
 
                     try {
-                        const optimizedFile = await compressImage(file);
-                        if (uploadAborted) break;
+                        const result = await NexusCore.uploadFile(file);
 
-                        statusText.innerText = `Syncing asset ${finishedCount + 1} to Cloud...`;
+                        if (result.error) {
+                            alert("Upload Error: " + result.error);
+                            break;
+                        }
 
-                        const downloadURL = await new Promise((resolve, reject) => {
-                            if (typeof storage === 'undefined') {
-                                reject("Firebase Storage not initialized.");
-                                return;
-                            }
-                            const storageRef = storage.ref(`products/${activeProject.id}/${Date.now()}_${optimizedFile.name}`);
-                            const uploadTask = storageRef.put(optimizedFile);
-                            activeUploadTasks.push(uploadTask);
-
-                            uploadTask.on('state_changed',
-                                (snapshot) => {
-                                    const filePercent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                    const totalPercent = ((finishedCount / files.length) * 100) + (filePercent * (1 / files.length));
-                                    progressBar.style.width = totalPercent + '%';
-                                },
-                                (error) => reject(error),
-                                () => {
-                                    uploadTask.snapshot.ref.getDownloadURL().then((url) => resolve(url));
-                                }
-                            );
-                        });
-
-                        if (uploadAborted) break;
-
-                        finishedCount++;
-                        const progressPercent = (finishedCount / files.length) * 100;
-                        progressBar.style.width = progressPercent + '%';
-
-                        currentMediaItems.push({ url: downloadURL, type: 'image' });
+                        currentMediaItems.push({ url: result.url, type: 'image' });
                         updateMediaPreviews();
 
-                    } catch (fileErr) {
-                        console.error("Individual asset error:", fileErr);
+                        finishedCount++;
+                        progressBar.style.width = (finishedCount / files.length) * 100 + '%';
+                    } catch (e) {
+                        console.error(e);
+                        break;
                     }
                 }
 
                 if (!uploadAborted) {
-                    statusText.innerText = "Synchronization Complete!";
+                    statusText.innerText = "Synchronization Complete! Assets live.";
                     setTimeout(() => progressContainer.style.display = 'none', 1500);
                 }
 
             } catch (err) {
-                console.error("General upload error:", err);
-                alert(`Upload taking too long? Try fewer images or check connection.`);
+                console.error("Critical Upload Error:", err);
+                alert(`Upload Halted: ${err.message || err}\n\nTips:\n1. Check your internet connection.\n2. Ensure Firebase Storage rules are set to public.\n3. Try with a single image first.`);
+                statusText.innerText = "Synchronization failed.";
                 progressContainer.style.display = 'none';
             }
 
@@ -1063,21 +1065,44 @@
         function updateMediaPreviews() {
             const container = document.getElementById('mediaPreviewContainer');
             container.innerHTML = currentMediaItems.map((item, index) => `
-                <div style="position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: #fff;">
+                <div style="position: relative; width: 85px; height: 85px; border-radius: 12px; overflow: hidden; border: 2px solid var(--border); background: #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
                     ${item.type === 'image'
                     ? `<img src="${item.url}" style="width: 100%; height: 100%; object-fit: cover;">`
-                    : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000;"><i data-lucide="play-circle" style="color: white; width: 24px;"></i></div>`}
-                    <button type="button" onclick="removeMedia(${index})" style="position: absolute; top: 2px; right: 2px; background: rgba(239, 68, 68, 0.9); border: none; border-radius: 4px; padding: 2px; cursor: pointer; color: white; display: flex;">
-                        <i data-lucide="x" style="width: 12px; height: 12px;"></i>
-                    </button>
+                    : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #0f172a;"><i data-lucide="play-circle" style="color: white; width: 24px;"></i></div>`}
+                    
+                    <!-- Reordering UI -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.2s; display: flex; flex-direction: column; justify-content: space-between; padding: 4px;" 
+                         onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+                        
+                        <div style="display: flex; justify-content: space-between;">
+                             <button type="button" onclick="moveMedia(${index}, -1)" style="background: var(--primary); color: white; border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; font-size: 10px; font-weight: 800;">←</button>
+                             <button type="button" onclick="removeMedia(${index})" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; font-size: 10px; font-weight: 800;">X</button>
+                             <button type="button" onclick="moveMedia(${index}, 1)" style="background: var(--primary); color: white; border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; font-size: 10px; font-weight: 800;">→</button>
+                        </div>
+                        
+                        <div style="color: white; font-size: 8px; font-weight: 800; text-align: center; text-transform: uppercase; background: rgba(0,0,0,0.5); border-radius: 2px;">
+                            ${index === 0 ? 'COVER' : 'SLIDE ' + (index + 1)}
+                        </div>
+                    </div>
                 </div>
             `).join('');
             lucide.createIcons();
         }
 
+        function moveMedia(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex >= 0 && newIndex < currentMediaItems.length) {
+                const item = currentMediaItems.splice(index, 1)[0];
+                currentMediaItems.splice(newIndex, 0, item);
+                updateMediaPreviews();
+            }
+        }
+
         function removeMedia(index) {
-            currentMediaItems.splice(index, 1);
-            updateMediaPreviews();
+            if (confirm("Remove this media item?")) {
+                currentMediaItems.splice(index, 1);
+                updateMediaPreviews();
+            }
         }
 
         document.getElementById('productForm').onsubmit = (e) => {
@@ -1116,13 +1141,16 @@
                 productsArr.push(product);
             }
 
-            projectData.products = productsArr;
-            NexusCore.save(activeProject.id, projectData);
-            projectData = NexusCore.init(activeProject.id, window.initialData);
-
-            closeModal('productModal');
-            alert('Cloud Asset Synchronization Successful!');
-            render();
+            // Save to MySQL via PHP API
+            NexusCore.saveProduct(product).then(res => {
+                if (res.success) {
+                    closeModal('productModal');
+                    alert('Product saved successfully to your server!');
+                    initCMS();
+                } else {
+                    alert("Server Error: " + res.error);
+                }
+            });
         };
 
         function editProduct(id) {
@@ -1130,16 +1158,20 @@
             if (p) openProductModal(p);
         }
 
-        function deleteProduct(id) {
+        async function deleteProduct(id) {
             if (confirm('Are you sure you want to remove this technical asset?')) {
-                projectData.products = projectData.products.filter(x => x.id != id);
-                NexusCore.save(activeProject.id, projectData);
-
-                // Refresh local data
-                projectData = NexusCore.init(activeProject.id, window.initialData);
-
-                alert('Product Removed.')
-                render();
+                try {
+                    const res = await NexusCore.deleteProduct(id);
+                    if (res.success) {
+                        projectData.products = projectData.products.filter(x => x.id != id);
+                        alert('Product Removed.');
+                        render();
+                    } else {
+                        alert('Error deleting product: ' + res.error);
+                    }
+                } catch (err) {
+                    alert('Network error during deletion.');
+                }
             }
         }
 

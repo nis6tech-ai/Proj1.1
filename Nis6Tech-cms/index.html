@@ -987,6 +987,16 @@
                                     <label>Physical Address / Office</label>
                                     <input type="text" id="sAddress" class="form-control" value="${s.contactAddress || s.contact_address || ''}">
                                 </div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                                    <div class="form-group">
+                                        <label><i data-lucide="instagram" style="width:14px;vertical-align:middle;"></i> Instagram URL</label>
+                                        <input type="text" id="sInsta" class="form-control" value="${(s.socialLinks && s.socialLinks.instagram) || (s.social_links && s.social_links.instagram) || ''}" placeholder="https://instagram.com/your-profile">
+                                    </div>
+                                    <div class="form-group">
+                                        <label><i data-lucide="linkedin" style="width:14px;vertical-align:middle;"></i> LinkedIn URL</label>
+                                        <input type="text" id="sLinkedin" class="form-control" value="${(s.socialLinks && s.socialLinks.linkedin) || (s.social_links && s.social_links.linkedin) || ''}" placeholder="https://linkedin.com/in/your-profile">
+                                    </div>
+                                </div>
                                 <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
                                     <button type="submit" class="btn btn-primary">Sync All Modifications</button>
                                 </div>
@@ -1009,7 +1019,11 @@
                             contactEmail: document.getElementById('sEmail').value,
                             whatsappNumber: document.getElementById('sWhatsapp').value,
                             contactPhone: document.getElementById('sPhone').value,
-                            contactAddress: document.getElementById('sAddress').value
+                            contactAddress: document.getElementById('sAddress').value,
+                            socialLinks: {
+                                instagram: document.getElementById('sInsta').value,
+                                linkedin: document.getElementById('sLinkedin').value
+                            }
                         };
                         projectData.settings = updated;
                         NexusCore.save(activeProject.id, projectData).then(res => {

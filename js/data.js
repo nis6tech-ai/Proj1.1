@@ -58,6 +58,8 @@ function applyDynamicSettings(settings) {
     const defaultPhone = '9940428882';
     const defaultEmail = 'sales@nutpa.com';
     const defaultWa = '919940428882';
+    const defaultInsta = 'https://instagram.com';
+    const defaultLinkedin = 'https://linkedin.com';
 
     // Address defaults
     const addressDefault1 = 'No 1/2, Janakiraman St, West Jafferkhanpet, Chennai — 600083, Tamil Nadu';
@@ -95,6 +97,17 @@ function applyDynamicSettings(settings) {
         updateTextNodes(document.body, addressDefault1, address);
         updateTextNodes(document.body, addressDefault2, address);
         updateTextNodes(document.body, addressDefault3, address);
+    }
+
+    // 5. Update Social Links
+    const social = settings.socialLinks || settings.social_links;
+    if (social) {
+        if (social.instagram) {
+            document.querySelectorAll(`a[href^="${defaultInsta}"]`).forEach(a => a.href = social.instagram);
+        }
+        if (social.linkedin) {
+            document.querySelectorAll(`a[href^="${defaultLinkedin}"]`).forEach(a => a.href = social.linkedin);
+        }
     }
 }
 

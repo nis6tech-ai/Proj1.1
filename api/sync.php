@@ -40,6 +40,7 @@ switch ($action) {
                 $settings['contactPhone'] = $settings['contact_phone'] ?? '';
                 $settings['whatsappNumber'] = $settings['whatsapp_number'] ?? '';
                 $settings['contactAddress'] = $settings['contact_address'] ?? '';
+                $settings['socialLinks'] = json_decode($settings['social_links'] ?? '[]', true) ?: [];
             }
 
             echo json_encode([
@@ -102,12 +103,13 @@ switch ($action) {
         $s = $data['settings'];
         
         try {
-            $sql = "INSERT INTO site_settings (project_id, site_name, site_tagline, site_logo, hero_image, contact_email, contact_phone, whatsapp_number, contact_address) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            $sql = "INSERT INTO site_settings (project_id, site_name, site_tagline, site_logo, hero_image, contact_email, contact_phone, whatsapp_number, contact_address, social_links) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE 
                     site_name=VALUES(site_name), site_tagline=VALUES(site_tagline), site_logo=VALUES(site_logo), 
                     hero_image=VALUES(hero_image), contact_email=VALUES(contact_email), contact_phone=VALUES(contact_phone), 
-                    whatsapp_number=VALUES(whatsapp_number), contact_address=VALUES(contact_address)";
+                    whatsapp_number=VALUES(whatsapp_number), contact_address=VALUES(contact_address),
+                    social_links=VALUES(social_links)";
             
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -119,7 +121,8 @@ switch ($action) {
                 $s['contactEmail'] ?? $s['contact_email'] ?? '',
                 $s['contactPhone'] ?? $s['contact_phone'] ?? '',
                 $s['whatsappNumber'] ?? $s['whatsapp_number'] ?? '',
-                $s['contactAddress'] ?? $s['contact_address'] ?? ''
+                $s['contactAddress'] ?? $s['contact_address'] ?? '',
+                json_encode($s['socialLinks'] ?? $s['social_links'] ?? [])
             ]);
             echo json_encode(['success' => true]);
         } catch (PDOException $e) {

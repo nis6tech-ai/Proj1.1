@@ -468,6 +468,37 @@ body {
     border-radius: 28px;
     transition: all 0.4s ease;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.p-card-premium > p {
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+}
+
+.p-card-premium h3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 3rem;
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.p-price-row, .p-price {
+    margin-top: auto;
+}
+
+.p-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
 }
 
 .p-card-premium:hover {
@@ -544,6 +575,9 @@ body {
     padding: 3.5rem;
     border-radius: 34px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .quote-icon {
@@ -560,6 +594,7 @@ body {
     margin: 1.5rem 0 2rem;
     font-style: italic;
     color: var(--text-soft);
+    flex-grow: 1;
 }
 
 .section-title-wrapper {

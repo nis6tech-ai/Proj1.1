@@ -8,7 +8,7 @@ const NexusCore = {
 
     init: async function (clientId) {
         try {
-            const resp = await fetch(`${this.apiUrl}?action=get_data`);
+            const resp = await fetch(`${this.apiUrl}?action=get_data&project=nutpa`);
             const data = await resp.json();
             return data;
         } catch (e) {
@@ -38,7 +38,7 @@ const NexusCore = {
 
     save: async function (clientId, data) {
         try {
-            const resp = await fetch(`${this.apiUrl}?action=save_settings`, {
+            const resp = await fetch(`${this.apiUrl}?action=save_settings&project=nutpa`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)

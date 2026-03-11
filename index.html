@@ -710,12 +710,13 @@
                                 <span class="p-price" style="font-size: 1.25rem; font-weight: 800;">₹${p.price}</span>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;" onclick="event.stopPropagation()">
-                                <a href="https://wa.me/919940428882?text=${encodeURIComponent(`Hi Nutpa, I am interested in:
+                                <a href="product-detail.html?id=${p.id}" class="btn btn-glass" style="width: 100%; justify-content: center; font-size: 0.9rem; padding: 0.6rem; border: 1px solid var(--border);">View Technical Specs</a>
+                                <a href="https://wa.me/${(window.settings && window.settings.whatsappNumber) || '919940428882'}?text=${encodeURIComponent(`Hi Nutpa, I am interested in:
 🛍️ Product: ${p.name}
 💰 Price: ${p.price}
 📝 Specs: ${p.description ? p.description.substring(0, 100) : 'Details on request'}...
 
-Please share more details.`)}" class="btn" style="background: #25D366; color: white; width: 100%; padding: 0.6rem; border-radius: 6px; font-size: 0.9rem; justify-content: center; border: none; text-decoration: none;" target="_blank">📞 WhatsApp</a>
+Please share more details.`)}" class="btn" style="background: #25D366; color: white; width: 100%; padding: 0.6rem; border-radius: 6px; font-size: 0.9rem; justify-content: center; border: none; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;" target="_blank">📞 WhatsApp Inquiry</a>
                             </div>
                         </div>
                 `;

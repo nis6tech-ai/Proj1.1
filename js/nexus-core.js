@@ -1,14 +1,17 @@
 /**
  * Nexus Core PHP Transition
  * Redirects all data operations to your Hostinger server.
+ * Supports multiple clients: Nutpa Electronics & OS Chennai
  */
 
 const NexusCore = {
     apiUrl: '/api/sync.php',
 
+    // Load data for a specific project (nutpa or os-chennai)
     init: async function (clientId) {
+        const projectId = clientId || 'nutpa';
         try {
-            const resp = await fetch(`${this.apiUrl}?action=get_data&project=nutpa`);
+            const resp = await fetch(`${this.apiUrl}?action=get_data&project=${encodeURIComponent(projectId)}`);
             const data = await resp.json();
             return data;
         } catch (e) {
@@ -36,9 +39,11 @@ const NexusCore = {
         return { success: true };
     },
 
+    // Save settings for a specific project (nutpa or os-chennai)
     save: async function (clientId, data) {
+        const projectId = clientId || 'nutpa';
         try {
-            const resp = await fetch(`${this.apiUrl}?action=save_settings&project=nutpa`, {
+            const resp = await fetch(`${this.apiUrl}?action=save_settings&project=${encodeURIComponent(projectId)}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -65,9 +70,11 @@ const NexusCore = {
         }
     },
 
+    // Both clients share the same product database
     getClients: function () {
         return [
-            { id: 'nutpa', name: 'Nutpa Electronics', domain: 'nutpa.com', status: 'active' }
+            { id: 'nutpa',      name: 'Nutpa Electronics', domain: 'nutpa.in',       status: 'active' },
+            { id: 'os-chennai', name: 'OS Chennai',         domain: 'oschennai.in',  status: 'active' }
         ];
     }
 };

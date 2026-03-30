@@ -860,9 +860,13 @@ body {
 
 .social-box i,
 .social-box svg {
-    width: 22px;
-    height: 22px;
-    stroke-width: 2px;
+    width: auto;
+    height: auto;
+    font-size: 1.25rem;
+}
+
+.fa-brands {
+    font-weight: 400 !important;
 }
 
 /* Search Bar - Modern Pill Design */

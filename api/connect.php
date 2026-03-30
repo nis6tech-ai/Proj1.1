@@ -19,7 +19,8 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
     ]);
-} catch (PDOException $e) {
+}
+catch (PDOException $e) {
     echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
     exit;
 }
@@ -27,7 +28,10 @@ try {
 /**
  * Utility to save site data to JSON (Optional - for high speed fetching)
  */
-function updateStaticCache($pdo) {
-    // We can generate a products.json for the frontend to load super fast
+function updateStaticCache($pdo)
+{
+// We can generate a products.json for the frontend to load super fast
 }
+
+
 ?>

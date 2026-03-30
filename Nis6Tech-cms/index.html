@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nutpa CMS | Admin Control</title>
+    <meta name="description"
+        content="Centralized management for OS Chennai and Nutpa Electronics. Optimized for SEO, inventory, and blog automation.">
+    <meta name="keywords" content="Admin Panel, CMS, Inventory Management, SEO Automation, Business Control">
+    <link rel="canonical" href="https://nutpa.in/Nis6Tech-cms/index.html">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Nis6Tech">
+    <meta name="publisher" content="Nutpa Electronics">
+    <meta name="language" content="en">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -522,7 +531,7 @@
                 </svg>
                 <span>Invalid username or password</span>
             </div>
-            <form onsubmit="handleLogin(event)">
+            <form id="loginForm">
                 <div class="form-group">
                     <label>Username</label>
                     <input type="text" id="loginUsername" class="form-control" placeholder="Enter username"
@@ -543,17 +552,20 @@
             Nutpa <span>CMS</span>
         </div>
 
-        <div class="client-info">
-            <label>Selected Portfolio</label>
-            <div class="client-selector" id="clientDisplay" onclick="openClientSwitcher()">
-                <span id="activeProjectName">Nutpa Electronics</span>
-                <i data-lucide="chevrons-up-down" style="width: 16px;"></i>
+        <div class="client-info" style="cursor: pointer;" onclick="openClientSwitcher()"
+            title="Click here to switch between Nutpa and OS Chennai">
+            <label>Current Website</label>
+            <div class="client-selector" id="clientDisplay">
+                <span id="activeProjectName" style="font-size: 0.9rem;">Nutpa Electronics</span>
+                <i data-lucide="shuffle" style="width: 14px; opacity: 0.7;"></i>
             </div>
         </div>
 
         <div class="nav">
             <button class="nav-link active" onclick="switchTab(this, 'dashboard')"><i
                     data-lucide="layout-dashboard"></i> Dashboard</button>
+            <button class="nav-link" onclick="switchTab(this, 'quotes')"><i data-lucide="mail"></i>
+                Inquiries</button>
             <button class="nav-link" onclick="switchTab(this, 'inventory')"><i data-lucide="package"></i>
                 Inventory</button>
             <button class="nav-link" onclick="switchTab(this, 'clients')"><i data-lucide="globe"></i> Manage
@@ -574,115 +586,186 @@
     <main class="main">
         <header class="header">
             <h1 id="tabTitle">Dashboard</h1>
-            <div class="actions" id="headerActions"></div>
+            <div class="actions" id="headerActions" style="display: flex; gap: 1rem;"></div>
         </header>
 
         <div class="content" id="mainContent"></div>
     </main>
 
     <!-- Product Modal -->
+    <!-- Product Modal -->
     <div class="modal" id="productModal">
-        <div class="modal-content">
-            <h2 id="modalTitle" style="margin-bottom: 2rem;">Add New Product</h2>
+        <div class="modal-content" style="width: 90%; max-width: 1150px; padding: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 id="modalTitle" style="font-size: 1.8rem; font-weight: 800; color: var(--sidebar);">Add New Product
+                    Profile</h2>
+                <button type="button" class="btn btn-ghost btn-icon" onclick="closeModal('productModal')"><i
+                        data-lucide="x"></i></button>
+            </div>
             <form id="productForm">
                 <input type="hidden" id="editProductId">
-                <div class="form-group">
-                    <label>Product Name</label>
-                    <input type="text" id="pName" class="form-control" required placeholder="e.g. MacBook Air">
-                </div>
-                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div>
-                        <label style="display: flex; justify-content: space-between;">
-                            <span>Category</span>
-                            <a href="#" onclick="openCategoryModal()"
-                                style="color: var(--primary); text-decoration: none; font-size: 0.8rem;">+ New
-                                Category</a>
-                        </label>
-                        <select id="pCategory" class="form-control" required></select>
-                    </div>
-                    <div>
-                        <label>Market Price (₹)</label>
-                        <input type="text" id="pPrice" class="form-control" placeholder="0.00">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Product Images</label>
+
+                <div style="display: flex; flex-direction: column; gap: 40px; margin-bottom: 30px;">
+                    <!-- Normal Fields -->
                     <div
-                        style="background: #fdf2f2; border: 1px solid #fecaca; padding: 0.75rem; border-radius: 10px; margin-bottom: 1rem; font-size: 0.8rem; color: #991b1b; display: flex; align-items: center; gap: 0.5rem;">
-                        <i data-lucide="alert-triangle" style="width: 16px;"></i>
-                        <span>Recommended size: <strong>800x800 pixels</strong> (Center the product for best fit). Max
-                            10MB.</span>
-                    </div>
-                    <div
-                        style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; border: 2px dashed var(--border);">
-                        <div id="mediaPreviewContainer"
-                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                            <!-- Previews will appear here -->
+                        style="background: #ffffff; padding: 30px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);">
+                        <h3
+                            style="margin-bottom: 25px; color: var(--primary); font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 12px;">
+                            <i data-lucide="package" style="width: 24px;"></i> Product Specification
+                        </h3>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; color: #334155; margin-bottom: 10px;">Full Product
+                                Name</label>
+                            <input type="text" id="pName" class="form-control" required
+                                placeholder="e.g. HP Pavilion Laptop 15-eg3000TX" oninput="generateSEO()"
+                                style="height: 55px; border-radius: 12px;">
                         </div>
 
-
-
-                        <!-- Option 2: Upload (Requires Firebase Storage) -->
-                        <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
-                            <input type="file" id="pMediaUpload" accept="image/*" multiple style="display: none;"
-                                onchange="handleMediaSelection(this)">
-                            <button type="button" class="btn btn-ghost"
-                                onclick="document.getElementById('pMediaUpload').click()"
-                                style="width: 100%; justify-content: center; font-size: 0.8rem; background: #f8fafc;">
-                                <i data-lucide="camera" style="width: 16px;"></i> Or Upload from Computer
-                            </button>
-                        </div>
-                        <div id="uploadProgress"
-                            style="display: none; margin-top: 1.5rem; background: #fff; padding: 1.25rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                                <small id="uploadStatus"
-                                    style="color: var(--text-main); font-size: 0.75rem; font-weight: 700;"></small>
-                                <button type="button" onclick="abortAllUploads()"
-                                    style="background: #fee2e2; border: none; color: var(--danger); font-size: 0.65rem; font-weight: 800; cursor: pointer; text-transform: uppercase; padding: 4px 8px; border-radius: 6px;">Cancel</button>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label style="font-weight: 700; color: #334155;">Display Price (₹)</label>
+                                <input type="text" id="pPrice" class="form-control" required placeholder="e.g. 74,990"
+                                    style="height: 55px; border-radius: 12px;">
                             </div>
-                            <div style="height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
-                                <div id="progressBar"
-                                    style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s; border-radius: 4px;">
+                            <div class="form-group">
+                                <label style="font-weight: 700; color: #334155;">Department / Category</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <select id="pCategory" class="form-control"
+                                        style="flex: 1; height: 55px; border-radius: 12px;" required></select>
+                                    <button type="button" class="btn btn-primary" onclick="openCategoryModal()"
+                                        title="Quick Add Category"
+                                        style="height: 55px; width: 55px; border-radius: 12px;"><i
+                                            data-lucide="plus"></i></button>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; color: #334155;">Promotional Description</label>
+                            <textarea id="pDesc" class="form-control" rows="4"
+                                style="resize: none; border-radius: 12px; line-height: 1.6;"
+                                placeholder="Describe why customers should buy this product..."
+                                oninput="generateSEO()"></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-weight: 700; color: #334155;">Technical Data Points (One per
+                                line)</label>
+                            <textarea id="pSpecs" class="form-control" rows="6"
+                                placeholder="Intel Core i5-1335U&#10;16GB DDR4 RAM&#10;512GB NVMe SSD&#10;NVIDIA MX550 2GB"
+                                style="resize: none; border-radius: 12px; background: #f8fafc;"
+                                oninput="generateSEO()"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- SEO Fields -->
+                    <div style="background: #f0fdf4; padding: 30px; border-radius: 24px; border: 1px dashed #4ade80;">
+                        <h3
+                            style="margin-bottom: 25px; color: #166534; font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 12px;">
+                            <i data-lucide="search" style="width: 24px;"></i> SEO Search Optimizer
+                        </h3>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; color: #14532d;">SEO Product Name</label>
+                            <input type="text" id="pSeoName" class="form-control"
+                                style="height: 55px; border-radius: 12px; border: 1px solid #bbf7d0;" required
+                                placeholder="Optimized Product Title">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; color: #14532d;">SEO URL Slug (Custom URL)</label>
+                            <div
+                                style="display: flex; align-items: center; border: 1px solid #bbf7d0; border-radius: 12px; overflow: hidden; background: white;">
+                                <span
+                                    style="background: #f0fdf4; padding: 0 20px; height: 55px; display: flex; align-items: center; color: #166534; font-size: 0.9rem; font-weight: 700; border-right: 1px solid #bbf7d0;">/product/</span>
+                                <input type="text" id="pSeoUrl" class="form-control"
+                                    style="border: none; box-shadow: none; height: 55px;" required
+                                    placeholder="optimized-url-slug">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; color: #14532d;">Semantic Keywords</label>
+                            <input type="text" id="pSeoKeywords" class="form-control"
+                                placeholder="comma, separated, list, of, keywords"
+                                style="height: 55px; border-radius: 12px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; color: #14532d;">Meta Search Description</label>
+                            <textarea id="pSeoDesc" class="form-control" rows="4"
+                                style="resize: none; border-radius: 12px;"
+                                placeholder="This snippet will appear in Google search results..."></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-weight: 700; color: #14532d;">Rich Technical Snippet (Structured)</label>
+                            <textarea id="pSeoSpecs" class="form-control" rows="6"
+                                style="resize: none; border-radius: 12px; background: #fdfdfd; font-family: 'Courier New', Courier, monospace; font-size: 0.9rem;"
+                                placeholder="Search engine schema preview..."></textarea>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group"
-                    style="background:#eff6ff; padding: 1rem; border-radius: 12px; border: 1px solid #bfdbfe;">
-                    <label style="color:#1e40af;"><i data-lucide="youtube"
-                            style="width:16px; vertical-align:middle;"></i> Video URL (YouTube or Direct Link)</label>
-                    <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
-                        <input type="text" id="pVideoLink" class="form-control" placeholder="Paste YouTube link here..."
-                            style="flex:1;">
-                        <button type="button" class="btn btn-primary" onclick="addVideoLink()"
-                            style="padding:0.6rem 1rem;">Add</button>
+                    style="background: var(--main-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--border);">
+                    <label
+                        style="font-weight: 800; font-size: 1.1rem; margin-bottom: 20px; display: block; color: var(--sidebar);">Multimedia
+                        Gallery</label>
+                    <div id="mediaPreviewContainer"
+                        style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px;"></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px;">
+                        <div>
+                            <input type="file" id="pMediaUpload" multiple accept="image/*" style="display: none;"
+                                onchange="handleMediaSelection(this)">
+                            <button type="button" class="btn btn-ghost"
+                                onclick="document.getElementById('pMediaUpload').click()"
+                                style="width: 100%; height: 60px; border: 2px dashed #94a3b8; background: #fff; border-radius: 12px; font-weight: 700;">
+                                <i data-lucide="plus" style="margin-right: 10px;"></i> Add High-Resolution Images
+                            </button>
+                            <div id="uploadProgress" style="display:none; margin-top: 15px;">
+                                <div
+                                    style="width:100%; background:#e2e8f0; height:8px; border-radius:4px; overflow:hidden;">
+                                    <div id="progressBar"
+                                        style="width:0%; height:100%; background:var(--primary); transition: width 0.4s ease;">
+                                    </div>
+                                </div>
+                                <span id="syncStatusText"
+                                    style="font-size: 0.75rem; color: var(--text-soft); font-weight: 700; margin-top: 5px; display: block;">Preparing...</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="pVideoLink" class="form-control"
+                                placeholder="YouTube URL or Cloud Video Direct MP4 Link..."
+                                style="flex:1; height: 60px; border-radius: 12px;">
+                            <button type="button" class="btn btn-primary" onclick="addVideoLink()"
+                                style="height: 60px; padding: 0 30px; border-radius: 12px; font-weight: 700;">Add Visual
+                                Asset</button>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="pDesc" class="form-control" rows="2" style="resize: none;"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Specifications (One per line)</label>
-                    <textarea id="pSpecs" class="form-control" rows="4"
-                        placeholder="e.g.&#10;16GB RAM&#10;1TB SSD&#10;M3 Chip" style="resize: none;"></textarea>
-                    <small style="color:var(--text-soft); font-size:0.75rem;">Enter each technical feature on a new
-                        line.</small>
-                </div>
-                <div class="form-group">
+
+                <div class="form-group" style="margin-top: 30px;">
                     <label
-                        style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; background: #fef3c7; padding: 0.75rem; border-radius: 10px; border: 1px solid #fde68a;">
-                        <input type="checkbox" id="pTopSelling" style="width: 18px; height: 18px;">
-                        <span style="color: #92400e; font-weight: 700;">Show in Top Selling Products Section on
-                            Homepage</span>
+                        style="display: flex; align-items: center; gap: 15px; cursor: pointer; background: #fffbeb; padding: 25px; border-radius: 20px; border: 1px solid #fde68a; transition: all 0.2s;">
+                        <input type="checkbox" id="pTopSelling" style="width: 25px; height: 25px; cursor: pointer;">
+                        <div>
+                            <div style="color: #92400e; font-weight: 900; font-size: 1.2rem;">Promote to Front-Page
+                                Featured Highlights</div>
+                            <div style="color: #b45309; font-size: 0.9rem; font-weight: 500;">Checking this will display
+                                the product in the homepage "Top Selling" carousel.</div>
+                        </div>
                     </label>
                 </div>
-                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
-                    <button type="button" class="btn btn-ghost" onclick="closeModal('productModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button>
+
+                <div
+                    style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 40px; border-top: 2px solid var(--border); padding-top: 30px;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('productModal')"
+                        style="padding: 0 35px; height: 60px; font-weight: 700; border-radius: 12px;">Discard</button>
+                    <button type="submit" class="btn btn-primary" id="saveProductBtn"
+                        style="padding: 0 50px; height: 60px; font-weight: 900; font-size: 1.2rem; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(59,130,246,0.3);">Save
+                        Product & Sync Live</button>
                 </div>
             </form>
         </div>
@@ -702,48 +785,165 @@
         </div>
     </div>
 
-    <!-- Add Client Modal -->
-    <div class="modal" id="addClientModal">
-        <div class="modal-content">
-            <h2>Add New Website Project</h2>
-            <form id="clientForm" style="margin-top: 2rem;">
-                <div class="form-group">
-                    <label>Website Name</label>
-                    <input type="text" id="cName" class="form-control" required placeholder="e.g. My Next Client">
+    <!-- Category Management Modal -->
+    <div class="modal" id="categoryManagementModal">
+        <div class="modal-content" style="width: 700px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2>Category Management</h2>
+                <button class="btn btn-primary" onclick="openCategoryModal()"><i data-lucide="plus"></i> Add
+                    New</button>
+            </div>
+            <div class="card" style="max-height: 400px; overflow-y: auto; padding: 0;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
+                        <tr>
+                            <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border);">Name
+                            </th>
+                            <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border);">Slug
+                                (Internal ID)</th>
+                            <th style="padding: 1rem; text-align: right; border-bottom: 1px solid var(--border);">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                        <!-- Categories injected here -->
+                    </tbody>
+                </table>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                <button class="btn btn-ghost" onclick="closeModal('categoryManagementModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal" id="categoryModal" style="z-index: 2000;">
+        <div class="modal-content" style="width: 90%; max-width: 900px;">
+            <h2 style="margin-bottom: 2rem;">Manage Category Profile</h2>
+            <form id="categoryForm">
+                <input type="hidden" id="editCategoryId">
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1.5rem;">
+                    <!-- Core Category Info -->
+                    <div
+                        style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border);">
+                        <h3 style="margin-bottom: 1rem; color: var(--primary); font-size: 1.1rem;"><i data-lucide="tag"
+                                style="width: 18px; vertical-align: middle;"></i> Identity</h3>
+                        <div class="form-group">
+                            <label>Category Label</label>
+                            <input type="text" id="catName" class="form-control" required
+                                placeholder="e.g. Enterprise Laptops" oninput="generateCategorySEO()">
+                        </div>
+                    </div>
+
+                    <!-- Category SEO -->
+                    <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 16px; border: 1px dashed #4ade80;">
+                        <h3 style="margin-bottom: 1rem; color: #166534; font-size: 1.1rem;"><i data-lucide="globe"
+                                style="width: 18px; vertical-align: middle;"></i> SEO Section</h3>
+
+                        <div class="form-group">
+                            <label>SEO Category Name (Title Tag)</label>
+                            <input type="text" id="catSeoName" class="form-control" required
+                                placeholder="Optimized Category Title">
+                        </div>
+
+                        <div class="form-group">
+                            <label>SEO URL Slug</label>
+                            <input type="text" id="catSeoUrl" class="form-control" required
+                                placeholder="e.g. enterprise-laptops">
+                        </div>
+
+                        <div class="form-group">
+                            <label>SEO Keywords</label>
+                            <input type="text" id="catSeoKeywords" class="form-control"
+                                placeholder="business laptops, authorized dealer">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Meta Description</label>
+                            <textarea id="catSeoDesc" class="form-control" rows="2" style="resize: none;"
+                                placeholder="Elevate your category search visibility..."></textarea>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Public Domain</label>
-                    <input type="text" id="cDomain" class="form-control" placeholder="e.g. client-site.com">
-                </div>
-                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
-                    <button type="button" class="btn btn-ghost" onclick="closeModal('addClientModal')">Back</button>
-                    <button type="submit" class="btn btn-primary">Create Project</button>
+
+                <input type="hidden" id="catId">
+                <div
+                    style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('categoryModal')">Discard</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">Save Category
+                        Profile</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Add Category Modal -->
-    <div class="modal" id="categoryModal">
-        <div class="modal-content" style="width: 400px;">
-            <h2 style="margin-bottom: 2rem;">Add New Category</h2>
-            <form id="categoryForm">
-                <div class="form-group">
-                    <label>Category ID</label>
-                    <input type="text" id="catId" class="form-control" required placeholder="e.g. servers">
-                    <small style="color:var(--text-soft); font-size:0.75rem;">Used internally. No spaces.</small>
+    <!-- Blog Modal -->
+    <div class="modal" id="blogModal" style="z-index: 2000;">
+        <div class="modal-content" style="width: 900px; max-width: 95vw;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 id="blogModalTitle">Add Blog</h2>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('blogModal')">Close</button>
+                    <button type="submit" form="blogForm" class="btn btn-primary">Save</button>
                 </div>
-                <div class="form-group">
-                    <label>Category Name</label>
-                    <input type="text" id="catName" class="form-control" required placeholder="e.g. Server Systems">
+            </div>
+            <form id="blogForm">
+                <input type="hidden" id="editBlogId">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="bTitle" class="form-control" required placeholder="Enter Title">
+                    </div>
+                    <div class="form-group">
+                        <label>SEO Title</label>
+                        <input type="text" id="bSeoTitle" class="form-control" placeholder="Enter SEO Title">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Category Image URL</label>
-                    <input type="text" id="catImage" class="form-control" placeholder="https://..." required>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="form-group">
+                        <label>Thumbnail / Media</label>
+                        <div
+                            style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; background: var(--main-bg); padding: 1rem; border-radius: 12px; border: 1px dashed var(--border);">
+                            <div id="bThumbnailPreview"
+                                style="width: 80px; height: 80px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
+                                <i data-lucide="image" style="color: #94a3b8;"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <input type="file" id="bThumbnailUpload" accept="image/*" style="display: none;"
+                                    onchange="handleImageUpload(this, 'bThumbnailPreview', 'bThumbnail')">
+                                <button type="button" class="btn btn-ghost"
+                                    onclick="document.getElementById('bThumbnailUpload').click()"
+                                    style="width: 100%; justify-content: center;">
+                                    <i data-lucide="camera"></i> Change Image
+                                </button>
+                                <input type="hidden" id="bThumbnail">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label>SEO Keywords</label>
+                            <input type="text" id="bSeoKeywords" class="form-control" placeholder="Enter SEO Keywords">
+                        </div>
+                        <div class="form-group">
+                            <label>SEO URL (Slug)</label>
+                            <input type="text" id="bSeoUrl" class="form-control" placeholder="Enter SEO URL">
+                        </div>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
-                    <button type="button" class="btn btn-ghost" onclick="closeModal('categoryModal')">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Category</button>
+
+                <div class="form-group">
+                    <label>SEO Description</label>
+                    <textarea id="bSeoDesc" class="form-control" rows="3" style="resize: none;"
+                        placeholder="Enter SEO Description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="bDesc" class="form-control" rows="10"
+                        placeholder="Enter blog content here..."></textarea>
                 </div>
             </form>
         </div>
@@ -824,14 +1024,17 @@
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-        document.getElementById('clientForm').onsubmit = (e) => {
-            e.preventDefault();
-            const nc = NexusCore.addClient(document.getElementById('cName').value, document.getElementById('cDomain').value);
-            // Provision the new client with the template
-            NexusCore.save(nc.id, window.initialData);
-            switchProject(nc.id);
-            closeModal('addClientModal');
-        };
+        const clientForm = document.getElementById('clientForm');
+        if (clientForm) {
+            clientForm.onsubmit = (e) => {
+                e.preventDefault();
+                const nc = NexusCore.addClient(document.getElementById('cName').value, document.getElementById('cDomain').value);
+                // Provision the new client with the template
+                NexusCore.save(nc.id, window.initialData);
+                switchProject(nc.id);
+                closeModal('addClientModal');
+            };
+        }
 
         function switchTab(el, tab) {
             currentTab = tab;
@@ -872,29 +1075,62 @@
                         </div>
                     `;
                 } else if (currentTab === 'inventory') {
-                    title.innerText = 'Product Management';
-                    actions.innerHTML = `<button class="btn btn-primary" onclick="openProductModal()"><i data-lucide="plus"></i> Add Product</button>`;
+                    title.innerText = 'Product Inventory';
+                    actions.innerHTML = `
+                         <button class="btn btn-ghost" onclick="exportExcel()"><i data-lucide="table"></i> Export Excel</button>
+                         <button class="btn btn-ghost" onclick="exportData()"><i data-lucide="code"></i> Export JSON</button>
+                         <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()"><i data-lucide="upload"></i> Import Data</button>
+                         <input type="file" id="importFile" style="display:none" accept=".json,.csv" onchange="importData(event)">
+                         <button class="btn btn-ghost" onclick="openCategoryManagementModal()"><i data-lucide="layers"></i> Manage Categories</button>
+                         <button class="btn btn-primary" onclick="openProductModal()"><i data-lucide="plus"></i> Add Product</button>
+                    `;
+                    
+                    let filteredProducts = projectData.products.filter(p => 
+                        p.name.toLowerCase().includes((window.inventorySearch || '').toLowerCase()) ||
+                        (p.category || '').toLowerCase().includes((window.inventorySearch || '').toLowerCase())
+                    );
+                    
+                    if (window.inventorySort === 'price-asc') filteredProducts.sort((a,b) => parseFloat(a.price.replace(/,/g,'')) - parseFloat(b.price.replace(/,/g,'')));
+                    if (window.inventorySort === 'price-desc') filteredProducts.sort((a,b) => parseFloat(b.price.replace(/,/g,'')) - parseFloat(a.price.replace(/,/g,'')));
+                    if (window.inventorySort === 'name-asc') filteredProducts.sort((a,b) => a.name.localeCompare(b.name));
+                    
                     container.innerHTML = `
+                        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; background: white; padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
+                            <div style="flex: 1; position: relative;">
+                                <i data-lucide="search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-soft); width: 18px;"></i>
+                                <input type="text" placeholder="Search by name or category..." class="form-control" style="padding-left: 3rem;" value="${window.inventorySearch || ''}" oninput="window.inventorySearch=this.value; render()">
+                            </div>
+                            <select class="form-control" style="width: 200px;" onchange="window.inventorySort=this.value; render()">
+                                <option value="newest" ${window.inventorySort === 'newest' ? 'selected' : ''}>Newest First</option>
+                                <option value="name-asc" ${window.inventorySort === 'name-asc' ? 'selected' : ''}>Name (A-Z)</option>
+                                <option value="price-asc" ${window.inventorySort === 'price-asc' ? 'selected' : ''}>Price (Low to High)</option>
+                                <option value="price-desc" ${window.inventorySort === 'price-desc' ? 'selected' : ''}>Price (High to Low)</option>
+                            </select>
+                        </div>
                         <div class="card">
                             <table>
                                 <thead>
                                     <tr>
                                         <th>Image</th>
-                                        <th>Details</th>
+                                        <th>Details & SEO</th>
                                         <th>Category</th>
                                         <th>Price</th>
                                         <th style="text-align:right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${projectData.products.map(p => {
+                                    ${filteredProducts.map(p => {
                         const mainImage = p.media && p.media.length > 0 ? p.media[0].url : (p.image || '');
                         const categoryObj = projectData.categories.find(c => c.id === p.category);
                         const categoryName = categoryObj ? categoryObj.name : (p.category || 'N/A');
                         return `
                                         <tr>
                                             <td><div style="width:50px; height:50px; background:#f1f5f9; border-radius:8px; overflow:hidden;"><img src="${resolveMediaUrl(mainImage)}" class="p-thumb" style="width:100%; height:100%; object-fit:contain;"></div></td>
-                                            <td><div style="font-weight: 800;">${p.name} ${p.isTopSelling ? '<span style="background:#fef3c7; color:#92400e; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 4px; border: 1px solid #fde68a;">TOP</span>' : ''}</div><div style="font-size: 0.8rem; color: var(--text-soft); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.description}</div></td>
+                                            <td>
+                                                <div style="font-weight: 800;">${p.name} ${p.isTopSelling ? '<span style="background:#fef3c7; color:#92400e; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 4px; border: 1px solid #fde68a;">TOP</span>' : ''}</div>
+                                                <div style="font-size: 0.8rem; color: var(--text-soft); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.description}</div>
+                                                <div style="font-size: 0.7rem; color: #16a34a; font-weight: 600; margin-top: 4px;"><i data-lucide="search" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> SEO: ${p.seoKeywords || 'None'}</div>
+                                            </td>
                                             <td><span class="badge">${categoryName}</span></td>
                                             <td style="font-weight: 800;">₹${p.price}</td>
                                             <td style="text-align:right">
@@ -941,7 +1177,12 @@
                     `;
                 } else if (currentTab === 'settings') {
                     title.innerText = 'Global Configurations';
-                    const s = projectData.settings || {};
+                    let s = projectData.settings || {};
+                    if (typeof s.social_links === 'string') {
+                        try { s.socialLinks = JSON.parse(s.social_links); } catch (e) { s.socialLinks = {}; }
+                    } else if (s.social_links) {
+                        s.socialLinks = s.social_links;
+                    }
                     container.innerHTML = `
                         <div class="card" style="padding: 3rem; max-width: 800px;">
                             <form id="settingsForm">
@@ -953,19 +1194,71 @@
                                     <label>Marketing Tagline</label>
                                     <input type="text" id="sTagline" class="form-control" value="${s.siteTagline || s.site_tagline || ''}">
                                 </div>
-                                <div class="form-group">
-                                    <label>Site Navigation Logo</label>
-                                    <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; background: var(--main-bg); padding: 1rem; border-radius: 12px; border: 1px dashed var(--border);">
-                                        <div id="sLogoPreview" style="width: 80px; height: 50px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
-                                            ${(s.siteLogo || s.site_logo) ? `<img src="${resolveMediaUrl(s.siteLogo || s.site_logo)}" style="width: 100%; height: 100%; object-fit: contain;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`}
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                                    <div class="form-group">
+                                        <label>Site Navigation Logo</label>
+                                        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; background: var(--main-bg); padding: 1rem; border-radius: 12px; border: 1px dashed var(--border);">
+                                            <div id="sLogoPreview" style="width: 80px; height: 50px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
+                                                ${(s.siteLogo || s.site_logo) ? `<img src="${resolveMediaUrl(s.siteLogo || s.site_logo)}" style="width: 100%; height: 100%; object-fit: contain;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`}
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <input type="file" id="sLogoUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'sLogoPreview', 'sLogo')">
+                                                <button type="button" class="btn btn-ghost" onclick="document.getElementById('sLogoUpload').click()" style="width: 100%; justify-content: center;">
+                                                    <i data-lucide="camera"></i> Change Logo
+                                                </button>
+                                                <input type="hidden" id="sLogo" value="${s.siteLogo || s.site_logo || ''}">
+                                            </div>
                                         </div>
-                                        <div style="flex: 1;">
-                                            <input type="file" id="sLogoUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'sLogoPreview', 'sLogo')">
-                                            <button type="button" class="btn btn-ghost" onclick="document.getElementById('sLogoUpload').click()" style="width: 100%; justify-content: center;">
-                                                <i data-lucide="camera"></i> Change Logo
-                                            </button>
-                                            <input type="hidden" id="sLogo" value="${s.siteLogo || s.site_logo || ''}">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Hero Banner Image (Big Top Image)</label>
+                                        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; background: var(--main-bg); padding: 1rem; border-radius: 12px; border: 1px dashed var(--border);">
+                                            <div id="sHeroPreview" style="width: 80px; height: 50px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
+                                                ${(s.heroImage || s.hero_image) ? `<img src="${resolveMediaUrl(s.heroImage || s.hero_image)}" style="width: 100%; height: 100%; object-fit: contain;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`}
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <input type="file" id="sHeroUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'sHeroPreview', 'sHero')">
+                                                <button type="button" class="btn btn-ghost" onclick="document.getElementById('sHeroUpload').click()" style="width: 100%; justify-content: center;">
+                                                    <i data-lucide="camera"></i> Change Hero Image
+                                                </button>
+                                                <input type="hidden" id="sHero" value="${s.heroImage || s.hero_image || ''}">
+                                            </div>
                                         </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Site Favicon (Browser Icon)</label>
+                                        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; background: #f0f9ff; padding: 1rem; border-radius: 12px; border: 1px dashed #7dd3fc;">
+                                            <div id="sFaviconPreview" style="width: 50px; height: 50px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0;">
+                                                ${(s.siteFavicon || s.site_favicon) ? `<img src="${resolveMediaUrl(s.siteFavicon || s.site_favicon)}" style="width: 100%; height: 100%; object-fit: contain;">` : `<i data-lucide="image" style="color: #94a3b8;"></i>`}
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <input type="file" id="sFaviconUpload" accept="image/png,image/x-icon,image/jpeg" style="display: none;" onchange="handleImageUpload(this, 'sFaviconPreview', 'sFavicon')">
+                                                <button type="button" class="btn btn-ghost" onclick="document.getElementById('sFaviconUpload').click()" style="width: 100%; justify-content: center; font-size: 0.8rem;">
+                                                    <i data-lucide="upload-cloud"></i> Upload Favicon
+                                                </button>
+                                                <input type="hidden" id="sFavicon" value="${s.siteFavicon || s.site_favicon || ''}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 2rem; padding: 2rem; background: #f8fafc; border-radius: 20px; border: 1px solid var(--border);">
+                                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 800; color: var(--sidebar); display: flex; align-items: center; gap: 10px;">
+                                        <i data-lucide="search" style="width: 20px;"></i> Site SEO Settings
+                                    </h3>
+                                    <div class="form-group">
+                                        <label>SEO Title (Browser Tab Name)</label>
+                                        <input type="text" id="sTitle" class="form-control" value="${s.siteTitle || s.site_title || ''}" placeholder="e.g. Project Name | Best Service in Chennai">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>SEO Keywords</label>
+                                        <textarea id="sKeywords" class="form-control" rows="3" placeholder="keyword1, keyword2, keyword3...">${s.siteKeywords || s.site_keywords || ''}</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>SEO Description</label>
+                                        <textarea id="sDescription" class="form-control" rows="4" placeholder="Brief description of your site for search engines...">${s.siteDescription || s.site_description || ''}</textarea>
                                     </div>
                                 </div>
 
@@ -989,12 +1282,12 @@
                                 </div>
                                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
                                     <div class="form-group">
-                                        <label><i data-lucide="instagram" style="width:14px;vertical-align:middle;"></i> Instagram URL</label>
-                                        <input type="text" id="sInsta" class="form-control" value="${(s.socialLinks && s.socialLinks.instagram) || (s.social_links && s.social_links.instagram) || ''}" placeholder="https://instagram.com/your-profile">
+                                        <label><i class="fa-brands fa-instagram" style="width:14px;vertical-align:middle;"></i> Instagram URL</label>
+                                        <input type="text" id="sInsta" class="form-control" value="${(s.socialLinks && s.socialLinks.instagram) || ''}" placeholder="https://instagram.com/your-profile">
                                     </div>
                                     <div class="form-group">
-                                        <label><i data-lucide="linkedin" style="width:14px;vertical-align:middle;"></i> LinkedIn URL</label>
-                                        <input type="text" id="sLinkedin" class="form-control" value="${(s.socialLinks && s.socialLinks.linkedin) || (s.social_links && s.social_links.linkedin) || ''}" placeholder="https://linkedin.com/in/your-profile">
+                                        <label><i class="fa-brands fa-linkedin-in" style="width:14px;vertical-align:middle;"></i> LinkedIn URL</label>
+                                        <input type="text" id="sLinkedin" class="form-control" value="${(s.socialLinks && s.socialLinks.linkedin) || ''}" placeholder="https://linkedin.com/in/your-profile">
                                     </div>
                                 </div>
                                 <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
@@ -1009,6 +1302,18 @@
                                 </div>
                             </form>
                         </div>
+                        
+                        <div class="card" style="padding: 3rem; max-width: 800px; margin-top: 2rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                                <h2>Blog Posts</h2>
+                                <button type="button" class="btn btn-primary" onclick="openBlogModal()">
+                                    <i data-lucide="plus"></i> Add New Blog
+                                </button>
+                            </div>
+                            <div id="blogsContainer">
+                                <!-- Blogs list will be rendered here -->
+                            </div>
+                        </div>
                     `;
                     document.getElementById('settingsForm').onsubmit = (e) => {
                         e.preventDefault();
@@ -1016,6 +1321,11 @@
                             siteName: document.getElementById('sName').value,
                             siteTagline: document.getElementById('sTagline').value,
                             siteLogo: document.getElementById('sLogo').value,
+                            heroImage: document.getElementById('sHero').value,
+                            siteFavicon: document.getElementById('sFavicon').value,
+                            siteTitle: document.getElementById('sTitle').value,
+                            siteKeywords: document.getElementById('sKeywords').value,
+                            siteDescription: document.getElementById('sDescription').value,
                             contactEmail: document.getElementById('sEmail').value,
                             whatsappNumber: document.getElementById('sWhatsapp').value,
                             contactPhone: document.getElementById('sPhone').value,
@@ -1035,11 +1345,52 @@
                             }
                         });
                     };
+                    renderBlogs();
+                } else if (currentTab === 'quotes') {
+                    title.innerText = 'Customer Inquiries & Quotes';
+                    actions.innerHTML = `<button class="btn btn-ghost" onclick="fetchQuotes()"><i data-lucide="refresh-cw"></i> Refresh</button>`;
+                    container.innerHTML = `<div id="quotesContainer" style="padding: 2rem; text-align: center;"><div class="loader" style="margin: 0 auto;"></div><p>Fetching messages...</p></div>`;
+                    fetchQuotes();
                 }
                 lucide.createIcons();
             } catch (err) {
                 console.error("Render error:", err);
                 document.getElementById('mainContent').innerHTML = `<div style="padding:2rem;color:red;">Error loading content: ${err.message}. Please try refreshing or clearing cache.</div>`;
+            }
+        }
+
+        function openCategoryManagementModal() {
+            const body = document.getElementById('categoryTableBody');
+            body.innerHTML = projectData.categories.map(c => `
+                <tr>
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--border);">
+                        <div style="font-weight: 700;">${c.name}</div>
+                        <div style="font-size: 0.7rem; color: #16a34a; font-weight: 600; margin-top: 4px;"><i data-lucide="search" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> SEO: ${c.seo_keywords || 'None'}</div>
+                    </td>
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--border);"><code>${c.id}</code></td>
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--border); text-align: right;">
+                        <button class="btn btn-ghost btn-icon" onclick="editCategory('${c.id}')"><i data-lucide="edit-3" style="width: 16px;"></i></button>
+                        <button class="btn btn-danger-ghost btn-icon" onclick="deleteCategory('${c.id}')"><i data-lucide="trash-2" style="width: 16px;"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            if (projectData.categories.length === 0) {
+                body.innerHTML = '<tr><td colspan="3" style="padding: 2rem; text-align: center; color: var(--text-soft);">No categories yet.</td></tr>';
+            }
+            document.getElementById('categoryManagementModal').classList.add('active');
+            lucide.createIcons();
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm(`Are you sure you want to delete this category? This will NOT delete products, but they will be un-categorized.`)) return;
+            const res = await fetch(`/api/sync.php?action=delete_category&id=${encodeURIComponent(id)}`);
+            const result = await res.json();
+            if (result.success) {
+                projectData.categories = projectData.categories.filter(c => c.id !== id);
+                openCategoryManagementModal();
+                if (currentTab === 'inventory') render();
+            } else {
+                alert("Delete failed: " + result.error);
             }
         }
 
@@ -1051,18 +1402,30 @@
 
         document.getElementById('categoryForm').onsubmit = async (e) => {
             e.preventDefault();
-            const id = document.getElementById('catId').value.toLowerCase().replace(/\s+/g, '-').trim();
             const name = document.getElementById('catName').value.trim();
-            const image = document.getElementById('catImage').value.trim();
+            const seoName = document.getElementById('catSeoName').value.trim();
+            const seoDesc = document.getElementById('catSeoDesc').value;
+            const seoKeywords = document.getElementById('catSeoKeywords').value;
+            const seoUrl = document.getElementById('catSeoUrl').value.trim();
+
+            // Auto-generate ID from name if this is a new category
+            const editId = document.getElementById('editCategoryId').value;
+            const id = editId || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            const image = "";
 
             if (!id || !name) return;
 
-            if (projectData.categories.find(c => c.id === id)) {
-                alert('Category ID already exists!');
-                return;
-            }
+            const existingIdx = projectData.categories.findIndex(c => c.id === id);
 
-            const newCat = { id, name, image };
+            const newCat = {
+                id,
+                name,
+                image,
+                seo_name: seoName,
+                seo_description: seoDesc,
+                seo_keywords: seoKeywords,
+                seo_url: seoUrl
+            };
 
             // Save to MySQL
             const res = await fetch('/api/sync.php?action=save_category', {
@@ -1073,19 +1436,38 @@
             const result = await res.json();
 
             if (result.success) {
-                projectData.categories.push(newCat);
+                if (existingIdx !== -1) {
+                    projectData.categories[existingIdx] = newCat;
+                } else {
+                    projectData.categories.push(newCat);
+                }
                 const catSelect = document.getElementById('pCategory');
                 if (catSelect) {
-                    catSelect.innerHTML += `<option value="${id}">${name}</option>`;
+                    // Re-render the whole list to keep it sorted/clean
+                    catSelect.innerHTML = '<option value="">Uncategorized</option>' +
+                        projectData.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
                     catSelect.value = id;
                 }
                 closeModal('categoryModal');
-                if (currentTab === 'dashboard') render();
-                alert('Category created and synced!');
+                alert('Category saved and synced!');
+                openCategoryManagementModal();
+                if (currentTab === 'inventory' || currentTab === 'dashboard') render();
             } else {
                 alert('Failed to save category: ' + result.error);
             }
         };
+
+        function editCategory(id) {
+            const cat = projectData.categories.find(c => c.id === id);
+            if (!cat) return;
+            document.getElementById('editCategoryId').value = cat.id;
+            document.getElementById('catName').value = cat.name;
+            document.getElementById('catSeoName').value = cat.seo_name || '';
+            document.getElementById('catSeoUrl').value = cat.seo_url || '';
+            document.getElementById('catSeoKeywords').value = cat.seo_keywords || '';
+            document.getElementById('catSeoDesc').value = cat.seo_description || '';
+            document.getElementById('categoryModal').classList.add('active');
+        }
 
         let currentMediaItems = [];
 
@@ -1107,6 +1489,12 @@
                 document.getElementById('pTopSelling').checked = p.isTopSelling || false;
                 document.getElementById('pSpecs').value = (p.features || []).join('\n');
 
+                document.getElementById('pSeoName').value = p.seoName || '';
+                document.getElementById('pSeoUrl').value = p.seoUrl || '';
+                document.getElementById('pSeoDesc').value = p.seoDesc || '';
+                document.getElementById('pSeoKeywords').value = p.seoKeywords || '';
+                document.getElementById('pSeoSpecs').value = (p.seoSpecs || []).join('\n');
+
                 // Load existing media
                 currentMediaItems = p.media || (p.image ? [{ url: p.image, type: 'image' }] : []);
             } else {
@@ -1114,11 +1502,64 @@
                 document.getElementById('productForm').reset();
                 document.getElementById('editProductId').value = '';
                 document.getElementById('pSpecs').value = '';
+                document.getElementById('pSeoName').value = '';
+                document.getElementById('pSeoUrl').value = '';
+                document.getElementById('pSeoDesc').value = '';
+                document.getElementById('pSeoSpecs').value = '';
                 document.getElementById('pTopSelling').checked = false;
                 currentMediaItems = [];
             }
             updateMediaPreviews();
             document.getElementById('productModal').classList.add('active');
+        }
+
+        function generateSEO() {
+            const name = document.getElementById('pName').value;
+            const desc = document.getElementById('pDesc').value;
+            const specs = document.getElementById('pSpecs').value;
+
+            if (name) {
+                document.getElementById('pSeoName').value = name.trim() + ' | Authorized Dealer Chennai';
+                document.getElementById('pSeoUrl').value = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                document.getElementById('pSeoKeywords').value = name + ', authorized ' + name + ' dealer chennai, ' + name + ' price south india';
+            } else {
+                document.getElementById('pSeoName').value = '';
+                document.getElementById('pSeoUrl').value = '';
+                document.getElementById('pSeoKeywords').value = '';
+            }
+
+            if (desc) {
+                document.getElementById('pSeoDesc').value = 'Looking for ' + name + '? ' + desc.substring(0, 100) + '... Buy now at the best price in OS Chennai!';
+            } else {
+                document.getElementById('pSeoDesc').value = '';
+            }
+
+            if (specs) {
+                const specLines = (specs || '').split('\n').filter(s => s.trim().length > 0);
+                if (specLines.length > 0) {
+                    const formatted = 'Technical Specifications:\n' + specLines.map(s => '✅ ' + s).join('\n');
+                    document.getElementById('pSeoSpecs').value = formatted;
+                } else {
+                    document.getElementById('pSeoSpecs').value = '';
+                }
+            } else {
+                document.getElementById('pSeoSpecs').value = '';
+            }
+        }
+
+        function generateCategorySEO() {
+            const name = document.getElementById('catName').value;
+            if (name) {
+                document.getElementById('catSeoName').value = name.trim() + ' | Authorized Dealer Chennai';
+                document.getElementById('catSeoUrl').value = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                document.getElementById('catSeoKeywords').value = name + ' dealer, bulk ' + name + ' order Chennai, IT procurement';
+                document.getElementById('catSeoDesc').value = 'Explore our wide range of ' + name + ' at competitive prices. OS Chennai provides authorized corporate IT solutions across Tamil Nadu.';
+            } else {
+                document.getElementById('catSeoName').value = '';
+                document.getElementById('catSeoUrl').value = '';
+                document.getElementById('catSeoKeywords').value = '';
+                document.getElementById('catSeoDesc').value = '';
+            }
         }
 
         let uploadAborted = false;
@@ -1146,11 +1587,11 @@
             activeUploadTasks = [];
             const progressContainer = document.getElementById('uploadProgress');
             const progressBar = document.getElementById('progressBar');
-            const statusText = document.getElementById('uploadStatus');
+            const statusText = document.getElementById('syncStatusText');
 
             progressContainer.style.display = 'block';
             progressBar.style.width = '0%';
-            statusText.innerText = "Connecting to Cloud Storage...";
+            statusText.innerText = "Connecting to Server...";
 
             try {
                 let finishedCount = 0;
@@ -1280,53 +1721,66 @@
             }
         }
 
-        document.getElementById('productForm').onsubmit = (e) => {
-            e.preventDefault();
-            const id = document.getElementById('editProductId').value;
+        const productForm = document.getElementById('productForm');
+        if (productForm) {
+            productForm.onsubmit = (e) => {
+                e.preventDefault();
+                const id = document.getElementById('editProductId').value;
 
-            if (currentMediaItems.length === 0) {
-                alert("Please upload at least one image or video for the product.");
-                return;
-            }
-
-            // Convert multi-line text to clean array
-            const features = document.getElementById('pSpecs').value
-                .split('\n')
-                .map(s => s.trim())
-                .filter(s => s.length > 0);
-
-            const product = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('pName').value,
-                category: document.getElementById('pCategory').value,
-                price: document.getElementById('pPrice').value,
-                // Fallback for legacy code
-                image: currentMediaItems[0].url,
-                media: currentMediaItems,
-                description: document.getElementById('pDesc').value,
-                features: features.length > 0 ? features : ['Elite Hardware Solution'],
-                isTopSelling: document.getElementById('pTopSelling').checked
-            };
-
-            let productsArr = [...projectData.products];
-            if (id) {
-                const idx = productsArr.findIndex(x => x.id == id);
-                if (idx !== -1) productsArr[idx] = product;
-            } else {
-                productsArr.push(product);
-            }
-
-            // Save to MySQL via PHP API
-            NexusCore.saveProduct(product).then(res => {
-                if (res.success) {
-                    closeModal('productModal');
-                    alert('Product saved successfully to your server!');
-                    initCMS();
-                } else {
-                    alert("Server Error: " + res.error);
+                if (currentMediaItems.length === 0) {
+                    alert("Please upload at least one image or video for the product.");
+                    return;
                 }
-            });
-        };
+
+                // Convert multi-line text to clean array
+                const features = document.getElementById('pSpecs').value
+                    .split('\n')
+                    .map(s => s.trim())
+                    .filter(s => s.length > 0);
+
+                const seoSpecs = document.getElementById('pSeoSpecs').value
+                    .split('\n')
+                    .map(s => s.trim())
+                    .filter(s => s.length > 0);
+
+                const product = {
+                    id: id ? parseInt(id) : Date.now(),
+                    name: document.getElementById('pName').value,
+                    category: document.getElementById('pCategory').value,
+                    price: document.getElementById('pPrice').value,
+                    // Fallback for legacy code
+                    image: currentMediaItems[0].url,
+                    media: currentMediaItems,
+                    description: document.getElementById('pDesc').value,
+                    features: features,
+                    seoName: document.getElementById('pSeoName').value,
+                    seoDesc: document.getElementById('pSeoDesc').value,
+                    seoKeywords: document.getElementById('pSeoKeywords').value,
+                    seoUrl: document.getElementById('pSeoUrl').value,
+                    seoSpecs: seoSpecs.length > 0 ? seoSpecs : [],
+                    isTopSelling: document.getElementById('pTopSelling').checked
+                };
+
+                let productsArr = [...projectData.products];
+                if (id) {
+                    const idx = productsArr.findIndex(x => x.id == id);
+                    if (idx !== -1) productsArr[idx] = product;
+                } else {
+                    productsArr.push(product);
+                }
+
+                // Save to MySQL via PHP API
+                NexusCore.saveProduct(product).then(res => {
+                    if (res.success) {
+                        closeModal('productModal');
+                        alert('Product saved successfully to your server!');
+                        initCMS();
+                    } else {
+                        alert("Server Error: " + res.error);
+                    }
+                });
+            };
+        }
 
         function editProduct(id) {
             const p = projectData.products.find(x => x.id == id);
@@ -1350,17 +1804,186 @@
             }
         }
 
-        function handleImageUpload(input, previewId, hiddenId) {
+        // --- BLOGS LOGIC ---
+        function renderBlogs() {
+            const container = document.getElementById('blogsContainer');
+            if (!container) return;
+            if (!projectData.blogs || projectData.blogs.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-soft); padding: 2rem;">No blogs found. Click Add New Blog to start.</div>';
+                return;
+            }
+            container.innerHTML = `
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead><tr><th style="padding: 1rem; border-bottom: 1px solid var(--border); text-align: left;">Thumbnail</th><th style="padding: 1rem; border-bottom: 1px solid var(--border); text-align: left;">Details / Keywords</th><th style="padding: 1rem; border-bottom: 1px solid var(--border); text-align: left;">SEO URL</th><th style="padding: 1rem; border-bottom: 1px solid var(--border); text-align: right;">Actions</th></tr></thead>
+                    <tbody>
+                        ${projectData.blogs.map(b => `
+                            <tr>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border);">
+                                    <div style="width:50px; height:50px; background:#f1f5f9; border-radius:8px; overflow:hidden;">
+                                        ${b.thumbnail ? `<img src="${resolveMediaUrl(b.thumbnail)}" style="width:100%; height:100%; object-fit:cover;">` : `<i data-lucide="image" style="margin:13px; color:#94a3b8;"></i>`}
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border);">
+                                    <div style="font-weight: 700;">${b.title}</div>
+                                    <div style="font-size: 0.7rem; color: #16a34a; font-weight: 600; margin-top: 4px;"><i data-lucide="search" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle;"></i> SEO: ${b.seo_keywords || 'None'}</div>
+                                </td>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border); color: var(--text-soft); font-size: 0.85rem;"><code>${b.seo_url || 'N/A'}</code></td>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border); text-align: right;">
+                                    <div style="display:flex; gap: 0.5rem; justify-content: flex-end;">
+                                        <button class="btn btn-ghost btn-icon" onclick="editBlog(${b.id})"><i data-lucide="edit-3" style="width: 16px"></i></button>
+                                        <button class="btn btn-danger-ghost btn-icon" onclick="deleteBlog(${b.id})"><i data-lucide="trash-2" style="width: 16px"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            lucide.createIcons();
+        }
+
+        function openBlogModal(b = null) {
+            document.getElementById('blogForm').reset();
+            const previewElem = document.getElementById('bThumbnailPreview');
+            previewElem.innerHTML = `<i data-lucide="image" style="color: #94a3b8;"></i>`;
+
+            if (b) {
+                document.getElementById('blogModalTitle').innerText = 'Edit Blog';
+                document.getElementById('editBlogId').value = b.id;
+                document.getElementById('bTitle').value = b.title;
+                document.getElementById('bSeoTitle').value = b.seo_title || '';
+                document.getElementById('bSeoKeywords').value = b.seo_keywords || '';
+                document.getElementById('bSeoUrl').value = b.seo_url || '';
+                document.getElementById('bThumbnail').value = b.thumbnail || '';
+                document.getElementById('bSeoDesc').value = b.seo_description || '';
+                document.getElementById('bDesc').value = b.description || '';
+
+                if (b.thumbnail) {
+                    previewElem.innerHTML = `<img src="${resolveMediaUrl(b.thumbnail)}" style="width: 100%; height: 100%; object-fit: contain;">`;
+                }
+            } else {
+                document.getElementById('blogModalTitle').innerText = 'Add Blog';
+                document.getElementById('editBlogId').value = '';
+                document.getElementById('bTitle').value = '';
+                document.getElementById('bSeoTitle').value = '';
+                document.getElementById('bSeoKeywords').value = '';
+                document.getElementById('bSeoUrl').value = '';
+                document.getElementById('bThumbnail').value = '';
+                document.getElementById('bSeoDesc').value = '';
+                document.getElementById('bDesc').value = '';
+            }
+            lucide.createIcons();
+            document.getElementById('blogModal').classList.add('active');
+        }
+
+        function editBlog(id) {
+            if (!projectData.blogs) return;
+            const b = projectData.blogs.find(x => x.id == id);
+            if (b) openBlogModal(b);
+        }
+
+        async function deleteBlog(id) {
+            if (!confirm("Are you sure you want to delete this blog?")) return;
+            try {
+                const res = await fetch(`/api/sync.php?action=delete_blog&id=${encodeURIComponent(id)}`);
+                const result = await res.json();
+                if (result.success) {
+                    projectData.blogs = projectData.blogs.filter(x => x.id != id);
+                    renderBlogs();
+                } else {
+                    alert('Error deleting blog: ' + result.error);
+                }
+            } catch (e) {
+                alert('Network error during deletion.');
+            }
+        }
+
+        const blogForm = document.getElementById('blogForm');
+        if (blogForm) {
+            blogForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('editBlogId').value;
+                const blogObj = {
+                    id: id ? parseInt(id) : Date.now(),
+                    project_id: activeProject.id,
+                    title: document.getElementById('bTitle').value,
+                    seoTitle: document.getElementById('bSeoTitle').value,
+                    seoKeywords: document.getElementById('bSeoKeywords').value,
+                    seoUrl: document.getElementById('bSeoUrl').value,
+                    thumbnail: document.getElementById('bThumbnail').value,
+                    seoDesc: document.getElementById('bSeoDesc').value,
+                    desc: document.getElementById('bDesc').value
+                };
+
+                try {
+                    const res = await fetch('/api/sync.php?action=save_blog', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(blogObj)
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        if (!projectData.blogs) projectData.blogs = [];
+
+                        // Fake a backend return structure by re-fetching or updating memory
+                        const backendFormatted = {
+                            id: blogObj.id,
+                            title: blogObj.title,
+                            seo_title: blogObj.seoTitle,
+                            seo_keywords: blogObj.seoKeywords,
+                            seo_url: blogObj.seoUrl,
+                            thumbnail: blogObj.thumbnail,
+                            seo_description: blogObj.seoDesc,
+                            description: blogObj.desc
+                        };
+
+                        if (id) {
+                            const idx = projectData.blogs.findIndex(x => x.id == id);
+                            if (idx !== -1) projectData.blogs[idx] = backendFormatted;
+                        } else {
+                            projectData.blogs.unshift(backendFormatted);
+                        }
+
+                        closeModal('blogModal');
+                        renderBlogs();
+                        alert('Blog saved successfully!');
+                    } else {
+                        alert('Failed to save blog: ' + result.error);
+                    }
+                } catch (err) {
+                    alert('Network error while saving blog.');
+                }
+            };
+        }
+
+        async function handleImageUpload(input, previewId, hiddenId) {
             const file = input.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const base64 = e.target.result;
-                document.getElementById(hiddenId).value = base64;
-                document.getElementById(previewId).innerHTML = `<img src="${base64}" style="width: 100%; height: 100%; object-fit: cover;">`;
-            };
-            reader.readAsDataURL(file);
+            const previewElem = document.getElementById(previewId);
+            // Show loading placeholder
+            previewElem.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #94a3b8; font-weight: 800; background: #eff6ff;">Uploading...</div>`;
+
+            try {
+                const result = await NexusCore.uploadFile(file);
+                if (result.error) {
+                    alert("Image Upload Failed: " + result.error);
+                    previewElem.innerHTML = `<i data-lucide="image" style="color: #94a3b8;"></i>`;
+                    lucide.createIcons();
+                    return;
+                }
+
+                // File successfully uploaded to server
+                const url = result.url;
+                document.getElementById(hiddenId).value = url;
+                previewElem.innerHTML = `<img src="${resolveMediaUrl(url)}" style="width: 100%; height: 100%; object-fit: contain;">`;
+                lucide.createIcons();
+            } catch (err) {
+                console.error("Critical Upload Error:", err);
+                alert("Upload process halted. Please check network connection.");
+                previewElem.innerHTML = `<i data-lucide="image" style="color: #94a3b8;"></i>`;
+                lucide.createIcons();
+            }
         }
         function hardResetData() {
             if (confirm("DANGER: This will delete ALL products you added via this browser and reset to the code version. Continue?")) {
@@ -1372,6 +1995,113 @@
         // --- LOGIN / AUTH ---
         const ADMIN_USER = 'admin';
         const ADMIN_PASS = 'nutpa@2026';
+
+        function exportExcel() {
+            const products = projectData.products;
+            if (!products.length) return;
+
+            // Simple CSV headers for Excel compatibility
+            const headers = ["ID", "Name", "Category", "Price", "Description", "SEO Name", "SEO Keywords", "SEO URL"];
+            const rows = products.map(p => [
+                p.id,
+                `"${p.name.replace(/"/g, '""')}"`,
+                `"${(p.category || '').replace(/"/g, '""')}"`,
+                `"${(p.price || '').replace(/"/g, '""')}"`,
+                `"${(p.description || '').replace(/"/g, '""')}"`,
+                `"${(p.seoName || '').replace(/"/g, '""')}"`,
+                `"${(p.seoKeywords || '').replace(/"/g, '""')}"`,
+                `"${(p.seoUrl || '').replace(/"/g, '""')}"`
+            ]);
+
+            const csvContent = "sep=,\n" + headers.join(",") + "\n" + rows.map(r => r.join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `${activeProject.id}_inventory_${new Date().toLocaleDateString()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData.products, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `${activeProject.id}_products_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        async function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const content = e.target.result;
+                let importedProducts = [];
+
+                try {
+                    if (file.name.endsWith('.json')) {
+                        importedProducts = JSON.parse(content);
+                    } else if (file.name.endsWith('.csv')) {
+                        // Simple CSV Parsing
+                        const lines = content.split('\n').filter(l => l.trim().length > 0);
+                        const startIdx = lines[0].startsWith('sep=') ? 2 : 1;
+                        const headers = lines[startIdx - 1].split(',');
+                        
+                        importedProducts = lines.slice(startIdx).map(line => {
+                            // Basic CSV cell split (handles some quotes)
+                            const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+                            const p = {};
+                            headers.forEach((h, i) => {
+                                let val = (values[i] || '').replace(/^"|"$/g, '').replace(/""/g, '"');
+                                p[h.trim()] = val;
+                            });
+                            // Core mapping
+                            return {
+                                id: parseInt(p["ID"]),
+                                name: p["Name"],
+                                category: p["Category"],
+                                price: p["Price"],
+                                description: p["Description"],
+                                seoName: p["SEO Name"],
+                                seoKeywords: p["SEO Keywords"],
+                                seoUrl: p["SEO URL"],
+                                media: [], // Default for CSV import
+                                features: []
+                            };
+                        });
+                    }
+
+                    if (!Array.isArray(importedProducts) || importedProducts.length === 0) {
+                        alert("Invalid format or empty file.");
+                        return;
+                    }
+
+                    if (!confirm(`Found ${importedProducts.length} products. Proceed to import? This will overwrite products with the same ID.`)) return;
+
+                    let successCount = 0;
+                    for (const prod of importedProducts) {
+                        if (!prod.name || !prod.id) continue;
+                        try {
+                            const res = await NexusCore.saveProduct(prod);
+                            if (res.success) successCount++;
+                        } catch (err) { console.error("Import error:", prod.id, err); }
+                    }
+
+                    alert(`Import Complete! Successfully synced ${successCount} out of ${importedProducts.length} items.`);
+                    initCMS();
+                } catch (err) {
+                    alert("Error parsing file. Please ensure it's a valid format.");
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
 
         function checkAuth() {
             if (sessionStorage.getItem('cms_auth') === 'true') {
@@ -1393,6 +2123,11 @@
             }
         }
 
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', handleLogin);
+        }
+
         function handleLogout() {
             sessionStorage.removeItem('cms_auth');
             document.getElementById('loginOverlay').classList.remove('hidden');
@@ -1403,6 +2138,90 @@
 
         checkAuth();
         render();
+        async function fetchQuotes() {
+            try {
+                const res = await fetch('/api/get_quotes.php?action=list');
+                const data = await res.json();
+                if (data.success) {
+                    renderQuotesList(data.quotes);
+                } else {
+                    document.getElementById('quotesContainer').innerHTML = `<div style="color:red; padding:2rem;">Failed to fetch: ${data.error}</div>`;
+                }
+            } catch (err) {
+                document.getElementById('quotesContainer').innerHTML = `<div style="color:red; padding:2rem;">Network Error: ${err.message}</div>`;
+            }
+        }
+
+        function renderQuotesList(quotes) {
+            const container = document.getElementById('quotesContainer');
+            if (!container) return;
+            
+            if (quotes.length === 0) {
+                container.innerHTML = `<div style="padding: 5rem 2rem; text-align:center; color: var(--text-soft);">
+                    <i data-lucide="mail-open" style="width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.3;"></i>
+                    <h3>No inquiries yet</h3>
+                    <p>When customers fill the "Get Quote" form, mereka will appear here.</p>
+                </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Subject & Message</th>
+                                <th style="text-align:right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${quotes.map(q => `
+                                <tr>
+                                    <td style="font-size: 0.85rem; color: var(--text-soft); width: 150px;">
+                                        ${new Date(q.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 800;">${q.name}</div>
+                                        <div style="font-size: 0.8rem; color: var(--primary);">${q.email}</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-soft);">${q.phone}</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 700; color: var(--sidebar); margin-bottom: 4px;">${q.subject}</div>
+                                        <div style="font-size: 0.9rem; color: var(--text-soft); line-height: 1.4; max-width: 500px;">
+                                            ${q.message}
+                                        </div>
+                                    </td>
+                                    <td style="text-align:right">
+                                        <button class="btn btn-danger-ghost btn-icon" onclick="deleteQuote(${q.id})">
+                                            <i data-lucide="trash-2" style="width: 16px"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        async function deleteQuote(id) {
+            if (!confirm('Are you sure you want to delete this inquiry?')) return;
+            try {
+                const res = await fetch(`/api/get_quotes.php?action=delete&id=${id}`);
+                const data = await res.json();
+                if (data.success) {
+                    fetchQuotes();
+                } else {
+                    alert('Delete failed: ' + data.error);
+                }
+            } catch (err) {
+                alert('Network Error');
+            }
+        }
     </script>
 </body>
 

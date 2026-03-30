@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" href="css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -94,8 +95,7 @@
             </div>
 
             <div class="image-card" style="padding:4rem;border-radius:50px;" data-aos="fade-left">
-                <form action="https://formspree.io/f/xbdzrlbw" method="POST" id="premiumContactForm"
-                    style="display:grid;gap:2rem;">
+                <form id="premiumContactForm" style="display:grid;gap:2rem;">
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
                         <div class="form-group">
                             <label style="font-weight:700;margin-bottom:0.75rem;display:block;">First Name</label>
@@ -127,10 +127,47 @@
                             class="glass"
                             style="width:100%;padding:1.2rem;border-radius:16px;border:1px solid var(--border);outline:none;resize:none;"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary"
-                        style="justify-content:center;padding:1.5rem;font-size:1.2rem;">Submit <i
+                    <button type="submit" class="btn btn-primary" id="submitContactBtn"
+                        style="justify-content:center;padding:1.5rem;font-size:1.2rem;"><span>Submit</span> <i
                             data-lucide="send"></i></button>
                 </form>
+
+                <script>
+                    document.getElementById('premiumContactForm').addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                        const btn = document.getElementById('submitContactBtn');
+                        const originalHtml = btn.innerHTML;
+                        btn.innerHTML = 'Sending...';
+                        btn.disabled = true;
+
+                        const formData = new FormData(this);
+                        const data = Object.fromEntries(formData.entries());
+
+                        // Local PHP API Endpoint
+                        const API_ENDPOINT = "api/submit_quote.php"; 
+
+                        try {
+                            const response = await fetch(API_ENDPOINT, {
+                                method: 'POST',
+                                body: formData
+                            });
+                            
+                            const result = await response.json();
+                            if(response.ok) {
+                                alert(result.message || 'Inquiry Sent Successfully! We will contact you soon.');
+                                this.reset();
+                            } else {
+                                alert('Failed: ' + (result.error || result.message || 'Server error'));
+                            }
+                        } catch (err) {
+                            alert("Technical Error: " + err.message + ". Please try calling us directly.");
+                            console.error(err);
+                        } finally {
+                            btn.innerHTML = originalHtml;
+                            btn.disabled = false;
+                        }
+                    });
+                </script>
             </div>
         </div>
     </div>
@@ -151,10 +188,10 @@
                     </p>
                     <div class="social-icons" style="margin-top: 1rem;">
                         <a href="https://instagram.com" target="_blank" class="social-box"><i
-                                data-lucide="instagram"></i></a>
+                                class="fa-brands fa-instagram"></i></a>
                         <a href="https://linkedin.com" target="_blank" class="social-box"><i
-                                data-lucide="linkedin"></i></a>
-                        <a href="tel:+919940428882" class="social-box"><i data-lucide="phone"></i></a>
+                                class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="tel:+919940428882" class="social-box"><i class="fa-solid fa-phone"></i></a>
                     </div>
                 </div>
 
@@ -167,6 +204,7 @@
                         <li><a href="about.html">About Us</a></li>
                         <li><a href="contact.html">Contact</a></li>
                         <li><a href="contact.html">Get a Quote</a></li>
+                        <li><a href="blog.html">Blog</a></li>
                     </ul>
                 </div>
 
@@ -185,11 +223,11 @@
                 <!-- Column 4 -->
                 <div class="footer-contact-block" id="footerContactBlock">
                     <h4 class="footer-title">Contact Us</h4>
-                    <p><i data-lucide="mail"></i> sales@nutpa.com</p>
-                    <p><i data-lucide="phone"></i> +91 9940428882</p>
-                    <p><i data-lucide="map-pin"></i> No 1/2, Janakiraman St, West Jafferkhanpet, Chennai — 600083, Tamil
+                    <p><i class="fa-solid fa-envelope"></i> sales@nutpa.com</p>
+                    <p><i class="fa-solid fa-phone"></i> +91 9940428882</p>
+                    <p><i class="fa-solid fa-location-dot"></i> No 1/2, Janakiraman St, West Jafferkhanpet, Chennai — 600083, Tamil
                         Nadu</p>
-                    <p><i data-lucide="clock"></i> Mon–Sat: 9:30 AM – 6:30 PM</p>
+                    <p><i class="fa-solid fa-clock"></i> Mon–Sat: 9:30 AM – 6:30 PM</p>
                 </div>
             </div>
 

@@ -10,17 +10,23 @@ window.liveData = {
 };
 
 // Global WhatsApp Formatter - Ensures 91 prefix for India
-window.formatWhatsappNumber = function(num) {
+window.formatWhatsappNumber = function (num) {
     if (!num) return '919940428882';
     let clean = String(num).replace(/[^0-9]/g, '');
-    // If it's a 10-digit number, assume it's India and prepend 91
+    // If it's 10 digits, it's definitely India, prepend 91
     if (clean.length === 10) return '91' + clean;
+    // If it starts with 994 and is 10 digits, it's definitely India (not Azerbaijan country code +994)
+    // Azerbaijan numbers are usually 9 digits after +994. 
+    // India mobile numbers starting with 99 are very common.
     return clean;
 };
 
+// Determine Project ID based on domain or fallback
+window.currentProjectId = window.location.hostname.includes('oschennai') || window.location.hostname.includes('os-chennai') ? 'os-chennai' : 'nutpa';
+
 async function loadLiveSiteData() {
     try {
-        const response = await fetch('/api/sync.php?action=get_data&project=nutpa');
+        const response = await fetch(`/api/sync.php?action=get_data&project=${window.currentProjectId}`);
         const data = await response.json();
 
         if (data.error) {
@@ -34,6 +40,10 @@ async function loadLiveSiteData() {
         window.categories = data.categories || [];
         window.settings = data.settings || {};
         window.blogs = data.blogs || [];
+
+        // Safety check
+        if (!window.settings) window.settings = {};
+        if (!window.products) window.products = [];
 
         // Custom event so components can start rendering
         window.dispatchEvent(new Event('dataLoaded'));
@@ -106,18 +116,24 @@ function applyDynamicSettings(settings) {
     const cleanWaArr = window.formatWhatsappNumber(wa);
 
     if (wa) {
-        document.querySelectorAll('a[href^="https://wa.me/"]').forEach(a => {
+        const siteName = settings.siteName || settings.site_name || (window.currentProjectId === 'os-chennai' ? "OS Chennai" : "Nutpa");
+        const defaultMsg = encodeURIComponent(`Hi ${siteName}, I have a general enquiry about your IT hardware solutions for my business.`);
+
+        // Target all WhatsApp links including floating buttons
+        document.querySelectorAll('a[href^="https://wa.me/"], a[href*="wa.me/"], #floatWa').forEach(a => {
             // Respect existing query params like ?text=
             try {
-                const url = new URL(a.href);
-                const text = url.searchParams.get('text');
-                a.href = `https://wa.me/${cleanWaArr}${text ? '?text=' + encodeURIComponent(text) : ''}`;
+                const urlStr = a.href;
+                const textMatch = urlStr.match(/[?&]text=([^&]*)/);
+                const text = textMatch ? textMatch[1] : defaultMsg;
+                a.href = `https://wa.me/${cleanWaArr}?text=${text}`;
             } catch (e) {
-                // Fallback for non-standard URLs
-                a.href = `https://wa.me/${cleanWaArr}`;
+                a.href = `https://wa.me/${cleanWaArr}?text=${defaultMsg}`;
             }
         });
+        // Update any text mention of the default number to include +91 for mobile sanity
         updateTextNodes(document.body, defaultWa, cleanWaArr);
+        updateTextNodes(document.body, '9940428882', '919940428882');
     }
 
     // 3. Update Email
@@ -140,9 +156,9 @@ function applyDynamicSettings(settings) {
     if (social) {
         let s = social;
         if (typeof social === 'string') {
-            try { s = JSON.parse(social); } catch(e) { s = {}; }
+            try { s = JSON.parse(social); } catch (e) { s = {}; }
         }
-        
+
         if (s.instagram) {
             document.querySelectorAll(`a[href^="${defaultInsta}"]`).forEach(a => a.href = s.instagram);
         }

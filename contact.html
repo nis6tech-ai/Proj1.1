@@ -141,6 +141,8 @@
                         btn.disabled = true;
 
                         const formData = new FormData(this);
+                        // Inject project ID for multi-tenant quote routing
+                        formData.append('project_id', window.currentProjectId || 'nutpa');
                         const data = Object.fromEntries(formData.entries());
 
                         // Local PHP API Endpoint

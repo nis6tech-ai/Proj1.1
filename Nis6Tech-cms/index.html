@@ -1085,20 +1085,26 @@
                          <button class="btn btn-primary" onclick="openProductModal()"><i data-lucide="plus"></i> Add Product</button>
                     `;
                     
-                    let filteredProducts = projectData.products.filter(p => 
-                        p.name.toLowerCase().includes((window.inventorySearch || '').toLowerCase()) ||
-                        (p.category || '').toLowerCase().includes((window.inventorySearch || '').toLowerCase())
-                    );
+                    let searchTerm = (window.cmsInventorySearchState || '').toLowerCase();
+                    let filteredProducts = projectData.products.filter(p => {
+                        const categoryObj = projectData.categories.find(c => c.id === p.category);
+                        const catName = (categoryObj ? categoryObj.name : (p.category || '')).toLowerCase();
+                        return p.name.toLowerCase().includes(searchTerm) ||
+                               catName.includes(searchTerm) ||
+                               (p.description || '').toLowerCase().includes(searchTerm) ||
+                               (p.seoKeywords || '').toLowerCase().includes(searchTerm);
+                    });
                     
-                    if (window.inventorySort === 'price-asc') filteredProducts.sort((a,b) => parseFloat(a.price.replace(/,/g,'')) - parseFloat(b.price.replace(/,/g,'')));
-                    if (window.inventorySort === 'price-desc') filteredProducts.sort((a,b) => parseFloat(b.price.replace(/,/g,'')) - parseFloat(a.price.replace(/,/g,'')));
+                    const cleanPrice = (p) => parseFloat(String(p.price || '0').replace(/[^0-9.]/g, '')) || 0;
+                    if (window.inventorySort === 'price-asc') filteredProducts.sort((a,b) => cleanPrice(a) - cleanPrice(b));
+                    if (window.inventorySort === 'price-desc') filteredProducts.sort((a,b) => cleanPrice(b) - cleanPrice(a));
                     if (window.inventorySort === 'name-asc') filteredProducts.sort((a,b) => a.name.localeCompare(b.name));
                     
                     container.innerHTML = `
                         <div style="display: flex; gap: 1rem; margin-bottom: 2rem; background: white; padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
                             <div style="flex: 1; position: relative;">
                                 <i data-lucide="search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-soft); width: 18px;"></i>
-                                <input type="text" placeholder="Search by name or category..." class="form-control" style="padding-left: 3rem;" value="${window.inventorySearch || ''}" oninput="window.inventorySearch=this.value; render()">
+                                <input type="text" id="inventorySearch" placeholder="Search by name, category, or specs..." class="form-control" style="padding-left: 3rem;" value="${window.cmsInventorySearchState || ''}" oninput="handleInventorySearch(this)">
                             </div>
                             <select class="form-control" style="width: 200px;" onchange="window.inventorySort=this.value; render()">
                                 <option value="newest" ${window.inventorySort === 'newest' ? 'selected' : ''}>Newest First</option>
@@ -2220,6 +2226,16 @@
                 }
             } catch (err) {
                 alert('Network Error');
+            }
+        }
+        function handleInventorySearch(input) {
+            window.cmsInventorySearchState = input.value;
+            render();
+            // Refocus and move cursor to end
+            const el = document.getElementById('inventorySearch');
+            if (el) {
+                el.focus();
+                el.setSelectionRange(el.value.length, el.value.length);
             }
         }
     </script>

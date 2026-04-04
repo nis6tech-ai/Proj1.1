@@ -15,7 +15,23 @@ if ($action === 'list') {
         $quotes = $stmt->fetchAll();
         echo json_encode(['success' => true, 'quotes' => $quotes]);
     } catch (PDOException $e) {
-        echo json_encode(['error' => 'Failed to fetch quotes: ' . $e->getMessage()]);
+        // Table not found error code
+        if ($e->getCode() === '42S02') {
+             // Let's try to auto-create it - Self-healing
+            $pdo->exec("CREATE TABLE IF NOT EXISTS quotes (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255),
+                email VARCHAR(255),
+                phone VARCHAR(50),
+                subject VARCHAR(255),
+                message TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )");
+            // Return empty list if just created
+            echo json_encode(['success' => true, 'quotes' => []]);
+        } else {
+            echo json_encode(['error' => 'Failed to fetch quotes: ' . $e->getMessage()]);
+        }
     }
 } elseif ($action === 'delete') {
     $id = $_GET['id'] ?? null;

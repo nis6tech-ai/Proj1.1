@@ -116,16 +116,16 @@ function applyDynamicSettings(settings) {
     const cleanWaArr = window.formatWhatsappNumber(wa);
 
     if (wa) {
-        const siteName = settings.siteName || settings.site_name || (window.currentProjectId === 'os-chennai' ? "OS Chennai" : "Nutpa");
-        const defaultMsg = encodeURIComponent(`Hi ${siteName}, I have a general enquiry about your IT hardware solutions for my business.`);
+        const siteNameShort = (settings.siteName || settings.site_name || (window.currentProjectId === 'os-chennai' ? "OS Chennai" : "Nutpa")).split(' ')[0];
+        const defaultMsg = encodeURIComponent(`Hi ${siteNameShort}, I have a general enquiry about your IT hardware solutions for my business.`);
 
         // Target all WhatsApp links including floating buttons
-        document.querySelectorAll('a[href^="https://wa.me/"], a[href*="wa.me/"], #floatWa').forEach(a => {
-            // Respect existing query params like ?text=
+        const waSelectors = 'a[href*="wa.me/"], a[href*="whatsapp.com/send"], .whatsapp-float, #floatWa';
+        document.querySelectorAll(waSelectors).forEach(a => {
             try {
                 const urlStr = a.href;
                 const textMatch = urlStr.match(/[?&]text=([^&]*)/);
-                const text = textMatch ? textMatch[1] : defaultMsg;
+                const text = (textMatch && textMatch[1]) ? textMatch[1] : defaultMsg;
                 a.href = `https://wa.me/${cleanWaArr}?text=${text}`;
             } catch (e) {
                 a.href = `https://wa.me/${cleanWaArr}?text=${defaultMsg}`;

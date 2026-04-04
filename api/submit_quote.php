@@ -97,29 +97,42 @@ try {
         }
     }
 
-    // 2. Fetch Admin Settings
+    // 2. Fetch Admin Settings & Enquiry Ref
+    $quoteId = $pdo->lastInsertId();
+    // Generate a unique reference similar to the image (UUID-like but concise)
+    $enquiryRef = strtoupper(substr(md5($quoteId . "salt"), 0, 8)) . "-" . strtoupper(substr(md5(time()), 0, 4)) . "-" . strtoupper(substr(md5($name), 0, 4)) . "-" . strtoupper(substr(md5($subject), 0, 12));
+    
     $adminEmail = "sales@nutpa.com"; // Default fallback
     $siteName = "Nutpa Web"; // Default fallback
+    $contactPhone = "+91 99404 28882";
+    $siteLogo = "assets/logo.png";
+
     try {
-        $stmt = $pdo->prepare("SELECT site_name, contact_email FROM site_settings WHERE project_id = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT site_name, contact_email, contact_phone, site_logo FROM site_settings WHERE project_id = ? LIMIT 1");
         $stmt->execute([$projectId]);
         $settings = $stmt->fetch();
         if ($settings) {
-            if (!empty($settings['contact_email']))
-                $adminEmail = $settings['contact_email'];
-            if (!empty($settings['site_name']))
-                $siteName = $settings['site_name'];
+            if (!empty($settings['contact_email'])) $adminEmail = $settings['contact_email'];
+            if (!empty($settings['site_name'])) $siteName = $settings['site_name'];
+            if (!empty($settings['contact_phone'])) $contactPhone = $settings['contact_phone'];
+            if (!empty($settings['site_logo'])) $siteLogo = $settings['site_logo'];
         }
-    } catch (Exception $e) { /* ignore settings fetch errors */
+    } catch (Exception $e) { /* ignore settings fetch errors */ }
+
+    // Normalize Logo URL
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'] ?? 'nutpa.in';
+    if (strpos($siteLogo, 'http') !== 0) {
+        $siteLogo = $protocol . "://" . $host . "/" . ltrim($siteLogo, '/');
     }
 
-    // 3. Construct Email Notification
+    // 3. Construct Email Notification (To Admin)
     require_once 'SmtpHelper.php';
 
     $to = $adminEmail;
     $emailSubject = "[$siteName] New Quote Request: " . $subject;
 
-    // HTML Email Body
+    // HTML Email Body (Admin)
     $body = "
     <html>
     <head>
@@ -144,9 +157,9 @@ try {
                 <div class='field'><span class='label'>Phone Number</span><div class='value'>$phone</div></div>
                 <div class='field'><span class='label'>Subject</span><div class='value'>$subject</div></div>
                 <div class='field'><span class='label'>Message</span><div class='value'>$message</div></div>
-                <div class='field'><span class='label'>Site Brand</span><div class='value'>$siteName ($projectId)</div></div>
+                <div class='field'><span class='label'>Reference ID</span><div class='value' style='font-family:monospace; color:#3b82f6;'>#$enquiryRef</div></div>
             </div>
-            <div class='footer'>Sent automatically via $siteName Quote Engine.</div>
+            <div class='footer'>Sent automatically via $siteName. Reference: $enquiryRef</div>
         </div>
     </body>
     </html>
@@ -162,30 +175,82 @@ try {
         ];
         $mailSent = $smtp->send($to, $emailSubject, $body, $headersExtra);
 
-        // 4. Send Auto-Reply to Customer
+        // 4. Send Auto-Reply to Customer (Premium Template based on user image)
         try {
-           $customerSubject = "Confirmation: Your Inquiry to $siteName Received";
+           $customerSubject = "We Received Your Enquiry - $siteName";
            $customerBody = "
            <html>
            <head>
+               <meta charset='UTF-8'>
                <style>
-                   body { font-family: 'Segoe UI', sans-serif; color: #1e293b; background: #f1f5f9; padding: 20px; }
-                   .card { background: #ffffff; padding: 40px; border-radius: 20px; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; }
-                   .btn { display: inline-block; padding: 12px 24px; background: #3b82f6; color: #ffffff !important; border-radius: 8px; text-decoration: none; font-weight: 700; margin-top: 20px; }
-                   .footer { margin-top: 30px; font-size: 13px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+                   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+                   body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background-color: #f3f4f6; color: #1f2937; -webkit-font-smoothing: antialiased; }
+                   .wrapper { padding: 40px 10px; background-color: #f3f4f6; }
+                   .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+                   .header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); padding: 40px 35px; color: #ffffff; }
+                   .logo { height: 45px; margin-bottom: 25px; }
+                   .site-name { font-weight: 800; font-size: 22px; letter-spacing: -0.5px; opacity: 0.95; }
+                   .title { margin: 0; font-size: 28px; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+                   .subtitle { margin-top: 10px; font-size: 15px; opacity: 0.85; line-height: 1.5; }
+                   .content { padding: 45px 35px; }
+                   .salutation { font-size: 17px; font-weight: 600; color: #111827; margin-bottom: 12px; }
+                   .intro { font-size: 15px; line-height: 1.7; color: #4b5563; margin-bottom: 35px; }
+                   .ref-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 25px; margin-bottom: 25px; }
+                   .ref-label { font-size: 11px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+                   .ref-value { font-size: 18px; font-weight: 700; color: #111827; font-family: monospace; word-break: break-all; }
+                   .help-box { background: #f0f7ff; border: 1px solid #dbeafe; border-radius: 12px; padding: 22px; margin-bottom: 35px; }
+                   .help-label { font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+                   .help-text { font-size: 15px; color: #1e40af; line-height: 1.4; }
+                   .help-text a { font-weight: 700; color: #2563eb; text-decoration: none; }
+                   .benefits { list-style: none; padding: 0; margin-bottom: 40px; }
+                   .benefit-item { font-size: 14px; color: #6b7280; margin-bottom: 12px; padding-left: 20px; position: relative; }
+                   .benefit-item:before { content: '•'; position: absolute; left: 0; color: #3b82f6; font-weight: bold; }
+                   .footer { border-top: 1px solid #f3f4f6; padding-top: 30px; }
+                   .regards { font-size: 15px; color: #4b5563; margin: 0; }
+                   .author { font-size: 16px; font-weight: 700; color: #1e40af; margin-top: 5px; }
+                   .outer-footer { text-align: center; margin-top: 25px; font-size: 12px; color: #9ca3af; }
                </style>
            </head>
            <body>
-               <div class='card'>
-                   <h2 style='color:#1e3a8a;'>Hi $name,</h2>
-                   <p style='font-size:16px; line-height:1.6;'>Thank you for reaching out to <strong>$siteName</strong>! We have successfully received your inquiry about <strong>\"$subject\"</strong>.</p>
-                   <p style='font-size:16px; line-height:1.6;'>Our team is currently reviewing your message and we will contact you shortly via this email or your phone number ($phone).</p>
-                   <a href='https://" . ($_SERVER['SERVER_NAME'] ?? 'nutpa.in') . "' class='btn'>Browse More Products</a>
-                   <div class='footer'>
-                       Best Regards,<br>
-                       <strong>The $siteName Team</strong><br>
-                       Email: $adminEmail<br>
-                       Address: Chennai, Tamil Nadu
+               <div class='wrapper'>
+                   <div class='container'>
+                       <div class='header'>
+                           <div class='site-name'>
+                               " . (!empty($settings['site_logo']) ? "<img src='$siteLogo' alt='$siteName' class='logo'>" : "$siteName") . "
+                           </div>
+                           <h1 class='title'>We Received Your Enquiry</h1>
+                           <div class='subtitle'>Thank you for contacting us. Our team will review your request and get back to you shortly.</div>
+                       </div>
+                       <div class='content'>
+                           <div class='salutation'>Hello $name,</div>
+                           <div class='intro'>
+                               We have received your enquiry for <strong>$subject</strong>. Your request has been recorded successfully and shared with our team.
+                           </div>
+                           
+                           <div class='ref-box'>
+                               <div class='ref-label'>ENQUIRY REFERENCE</div>
+                               <div class='ref-value'>$enquiryRef</div>
+                           </div>
+
+                           <div class='help-box'>
+                               <div class='help-label'>NEED IMMEDIATE HELP?</div>
+                               <div class='help-text'>For more information, please contact us at: <a href='tel:$contactPhone'>$contactPhone</a></div>
+                           </div>
+
+                           <ul class='benefits'>
+                               <li class='benefit-item'>Our team usually responds during business hours.</li>
+                               <li class='benefit-item'>For urgent help, you can also reply directly to this email.</li>
+                               <li class='benefit-item'>Please keep the enquiry reference handy for faster follow-up.</li>
+                           </ul>
+
+                           <div class='footer'>
+                               <p class='regards'>Regards,</p>
+                               <p class='author'>$siteName Team</p>
+                           </div>
+                       </div>
+                   </div>
+                   <div class='outer-footer'>
+                       &copy; " . date('Y') . " $siteName. All rights reserved.
                    </div>
                </div>
            </body>
@@ -193,6 +258,7 @@ try {
            ";
            $smtp->send($email, $customerSubject, $customerBody);
         } catch (Exception $e2) { /* ignore auto-reply failures to not block original success */ }
+
     } catch (Exception $e) {
         $errorMsg = $e->getMessage();
         error_log("SMTP Error: " . $errorMsg);

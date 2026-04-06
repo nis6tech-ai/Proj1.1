@@ -146,9 +146,25 @@ function applyDynamicSettings(settings) {
     // 4. Update Address
     const address = settings.contactAddress || settings.contact_address;
     if (address) {
-        updateTextNodes(document.body, addressDefault1, address);
-        updateTextNodes(document.body, addressDefault2, address);
-        updateTextNodes(document.body, addressDefault3, address);
+        const addressDefaults = [
+            'No 1/2, Janakiraman St, West Jafferkhanpet, Chennai — 600083, Tamil Nadu',
+            'No 1/2, Janakiraman St, West Jafferkhanpet',
+            'West Jafferkhanpet, Chennai'
+        ];
+        
+        function updateAddressNodes(node) {
+            if (node.nodeType === 3) {
+                for (const search of addressDefaults) {
+                    if (node.nodeValue.includes(search)) {
+                        node.nodeValue = node.nodeValue.split(search).join(address);
+                        return; // Important: Stop after first replacement for this node
+                    }
+                }
+            } else if (node.nodeType === 1 && node.nodeName !== 'SCRIPT' && node.nodeName !== 'STYLE') {
+                node.childNodes.forEach(child => updateAddressNodes(child));
+            }
+        }
+        updateAddressNodes(document.body);
     }
 
     // 5. Update Social Links

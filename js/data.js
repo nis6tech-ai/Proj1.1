@@ -97,10 +97,6 @@ function applyDynamicSettings(settings) {
     const defaultInsta = 'https://instagram.com';
     const defaultLinkedin = 'https://linkedin.com';
 
-    // Address defaults
-    const addressDefault1 = 'No 1/2, Janakiraman St, West Jafferkhanpet, Chennai — 600083, Tamil Nadu';
-    const addressDefault2 = 'West Jafferkhanpet, Chennai';
-    const addressDefault3 = 'No 1/2, Janakiraman St, West Jafferkhanpet';
 
     // 1. Update Phone Numbers
     const phone = settings.contactPhone || settings.contact_phone;
@@ -141,17 +137,16 @@ function applyDynamicSettings(settings) {
     if (email) {
         document.querySelectorAll('a[href^="mailto:"]').forEach(a => a.href = 'mailto:' + email);
         updateTextNodes(document.body, defaultEmail, email);
+        updateTextNodes(document.body, 'solutions@nutpa.com', email);
     }
 
     // 4. Update Address
     const address = settings.contactAddress || settings.contact_address;
     if (address) {
         const addressDefaults = [
-            'No 1/2, Janakiraman St, West Jafferkhanpet, Chennai — 600083, Tamil Nadu',
-            'No 1/2, Janakiraman St, West Jafferkhanpet',
-            'West Jafferkhanpet, Chennai'
+            'No 1/2, Janakiraman st, 83rd St, Muthurangam Block, West Jafferkhanpet, Chennai,Tamil Nadu 600083',
         ];
-        
+
         function updateAddressNodes(node) {
             if (node.nodeType === 3) {
                 for (const search of addressDefaults) {
